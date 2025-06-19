@@ -344,6 +344,44 @@
 					"type": "boolean",
 					"default": false,
 					"description": "%settings.rooCodeCloudEnabled.description%"
+				},
+				"roo-cline.schemapin.enabled": {
+					"type": "boolean",
+					"default": true,
+					"description": "Enable SchemaPin schema verification for MCP tools"
+				},
+				"roo-cline.schemapin.strictMode": {
+					"type": "boolean",
+					"default": false,
+					"description": "Enable strict mode - reject tools without valid signatures"
+				},
+				"roo-cline.schemapin.autoPin": {
+					"type": "boolean",
+					"default": false,
+					"description": "Automatically pin keys for new tools without prompting"
+				},
+				"roo-cline.schemapin.verificationTimeout": {
+					"type": "number",
+					"default": 5000,
+					"minimum": 1000,
+					"maximum": 30000,
+					"description": "Timeout in milliseconds for schema verification operations"
+				},
+				"roo-cline.schemapin.trustedDomains": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					},
+					"default": [],
+					"description": "List of trusted domains that bypass verification"
+				},
+				"roo-cline.schemapin.blockedDomains": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					},
+					"default": [],
+					"description": "List of blocked domains that are never allowed"
 				}
 			}
 		}
@@ -415,6 +453,7 @@
 		"reconnecting-eventsource": "^1.6.4",
 		"sanitize-filename": "^1.6.3",
 		"say": "^0.16.0",
+		"schemapin": "^1.0.0",
 		"serialize-error": "^11.0.3",
 		"simple-git": "^3.27.0",
 		"sound-play": "^1.1.0",

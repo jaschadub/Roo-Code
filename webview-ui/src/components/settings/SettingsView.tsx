@@ -22,6 +22,7 @@ import {
 	Globe,
 	Info,
 	MessageSquare,
+	Shield,
 	LucideIcon,
 } from "lucide-react"
 
@@ -64,6 +65,7 @@ import { LanguageSettings } from "./LanguageSettings"
 import { About } from "./About"
 import { Section } from "./Section"
 import PromptsSettings from "./PromptsSettings"
+import { SchemaPinSettings } from "./SchemaPinSettings"
 import { cn } from "@/lib/utils"
 
 export const settingsTabsContainer = "flex flex-1 overflow-hidden [&.narrow_.tab-label]:hidden"
@@ -86,6 +88,7 @@ const sectionNames = [
 	"contextManagement",
 	"terminal",
 	"prompts",
+	"schemapin",
 	"experimental",
 	"language",
 	"about",
@@ -172,6 +175,12 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone, t
 		codebaseIndexConfig,
 		codebaseIndexModels,
 		customSupportPrompts,
+		schemaPinEnabled,
+		schemaPinStrictMode,
+		schemaPinAutoPin,
+		schemaPinVerificationTimeout,
+		schemaPinTrustedDomains,
+		schemaPinBlockedDomains,
 	} = cachedState
 
 	const apiConfiguration = useMemo(() => cachedState.apiConfiguration ?? {}, [cachedState.apiConfiguration])
@@ -392,6 +401,7 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone, t
 			{ id: "contextManagement", icon: Database },
 			{ id: "terminal", icon: SquareTerminal },
 			{ id: "prompts", icon: MessageSquare },
+			{ id: "schemapin", icon: Shield },
 			{ id: "experimental", icon: FlaskConical },
 			{ id: "language", icon: Globe },
 			{ id: "about", icon: Info },
@@ -670,6 +680,24 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone, t
 						<PromptsSettings
 							customSupportPrompts={customSupportPrompts || {}}
 							setCustomSupportPrompts={setCustomSupportPromptsField}
+						/>
+					)}
+
+					{/* SchemaPin Section */}
+					{activeTab === "schemapin" && (
+						<SchemaPinSettings
+							schemaPinEnabled={schemaPinEnabled}
+							schemaPinStrictMode={schemaPinStrictMode}
+							schemaPinAutoPin={schemaPinAutoPin}
+							schemaPinVerificationTimeout={schemaPinVerificationTimeout}
+							schemaPinTrustedDomains={schemaPinTrustedDomains}
+							schemaPinBlockedDomains={schemaPinBlockedDomains}
+							setSchemaPinEnabled={extensionState.setSchemaPinEnabled}
+							setSchemaPinStrictMode={extensionState.setSchemaPinStrictMode}
+							setSchemaPinAutoPin={extensionState.setSchemaPinAutoPin}
+							setSchemaPinVerificationTimeout={extensionState.setSchemaPinVerificationTimeout}
+							setSchemaPinTrustedDomains={extensionState.setSchemaPinTrustedDomains}
+							setSchemaPinBlockedDomains={extensionState.setSchemaPinBlockedDomains}
 						/>
 					)}
 

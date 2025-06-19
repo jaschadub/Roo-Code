@@ -22,6 +22,20 @@ vi.mock("../../../i18n", () => ({
 	}),
 }))
 
+// Mock SchemaPin service
+vi.mock("../../../services/schemapin", () => ({
+	SchemaPinService: vi.fn().mockImplementation(() => ({
+		initialize: vi.fn().mockResolvedValue(undefined),
+		isEnabled: vi.fn().mockReturnValue(true),
+		verifyMcpTool: vi.fn().mockResolvedValue({
+			valid: true,
+			pinned: false,
+			firstUse: false,
+		}),
+		dispose: vi.fn().mockResolvedValue(undefined),
+	})),
+}))
+
 describe("useMcpToolTool", () => {
 	let mockTask: Partial<Task>
 	let mockAskApproval: ReturnType<typeof vi.fn>
@@ -40,8 +54,28 @@ describe("useMcpToolTool", () => {
 			deref: vi.fn().mockReturnValue({
 				getMcpHub: vi.fn().mockReturnValue({
 					callTool: vi.fn(),
+					getAllServers: vi.fn().mockReturnValue([
+						{
+							name: "test_server",
+							tools: [
+								{
+									name: "test_tool",
+									inputSchema: { type: "object", properties: { param: { type: "string" } } },
+								},
+							],
+						},
+					]),
 				}),
 				postMessageToWebview: vi.fn(),
+				context: {
+					globalState: {
+						get: vi.fn(),
+						update: vi.fn(),
+					},
+					globalStorageUri: {
+						fsPath: "/mock/path",
+					},
+				},
 			}),
 		}
 
@@ -192,8 +226,28 @@ describe("useMcpToolTool", () => {
 			mockProviderRef.deref.mockReturnValue({
 				getMcpHub: () => ({
 					callTool: vi.fn().mockResolvedValue(mockToolResult),
+					getAllServers: vi.fn().mockReturnValue([
+						{
+							name: "test_server",
+							tools: [
+								{
+									name: "test_tool",
+									inputSchema: { type: "object", properties: { param: { type: "string" } } },
+								},
+							],
+						},
+					]),
 				}),
 				postMessageToWebview: vi.fn(),
+				context: {
+					globalState: {
+						get: vi.fn(),
+						update: vi.fn(),
+					},
+					globalStorageUri: {
+						fsPath: "/mock/path",
+					},
+				},
 			})
 
 			await useMcpToolTool(
@@ -265,6 +319,354 @@ describe("useMcpToolTool", () => {
 			)
 
 			expect(mockHandleError).toHaveBeenCalledWith("executing MCP tool", error)
+		})
+	})
+
+	describe("SchemaPin integration", () => {
+		it("should perform schema verification when SchemaPin is enabled", async () => {
+			const block: ToolUse = {
+				type: "tool_use",
+				name: "use_mcp_tool",
+				params: {
+					server_name: "test_server",
+					tool_name: "test_tool",
+					arguments: '{"param": "value"}',
+				},
+				partial: false,
+			}
+
+			mockAskApproval.mockResolvedValue(true)
+
+			const mockToolResult = {
+				content: [{ type: "text", text: "Tool executed successfully" }],
+				isError: false,
+			}
+
+			const mockSchemaPinService = {
+				initialize: vi.fn().mockResolvedValue(undefined),
+				isEnabled: vi.fn().mockReturnValue(true),
+				verifyMcpTool: vi.fn().mockResolvedValue({
+					valid: true,
+					pinned: false,
+					firstUse: false,
+				}),
+			}
+
+			mockProviderRef.deref.mockReturnValue({
+				getMcpHub: () => ({
+					callTool: vi.fn().mockResolvedValue(mockToolResult),
+					getAllServers: vi.fn().mockReturnValue([
+						{
+							name: "test_server",
+							tools: [
+								{
+									name: "test_tool",
+									inputSchema: { type: "object", properties: { param: { type: "string" } } },
+								},
+							],
+						},
+					]),
+				}),
+				postMessageToWebview: vi.fn(),
+				context: {
+					globalState: {
+						get: vi.fn(),
+						update: vi.fn(),
+					},
+					globalStorageUri: {
+						fsPath: "/mock/path",
+					},
+				},
+				schemaPinService: mockSchemaPinService,
+			})
+
+			await useMcpToolTool(
+				mockTask as Task,
+				block,
+				mockAskApproval,
+				mockHandleError,
+				mockPushToolResult,
+				mockRemoveClosingTag,
+			)
+
+			expect(mockSchemaPinService.verifyMcpTool).toHaveBeenCalledWith({
+				serverName: "test_server",
+				toolName: "test_tool",
+				schema: { type: "object", properties: { param: { type: "string" } } },
+				signature: undefined,
+				domain: "test_server",
+				toolId: "test_server/test_tool",
+			})
+			expect(mockTask.say).toHaveBeenCalledWith("text", "✅ Schema verified for test_server/test_tool")
+		})
+
+		it("should handle schema verification failure gracefully", async () => {
+			const block: ToolUse = {
+				type: "tool_use",
+				name: "use_mcp_tool",
+				params: {
+					server_name: "test_server",
+					tool_name: "test_tool",
+					arguments: '{"param": "value"}',
+				},
+				partial: false,
+			}
+
+			mockAskApproval.mockResolvedValue(true)
+
+			const mockToolResult = {
+				content: [{ type: "text", text: "Tool executed successfully" }],
+				isError: false,
+			}
+
+			const mockSchemaPinService = {
+				initialize: vi.fn().mockResolvedValue(undefined),
+				isEnabled: vi.fn().mockReturnValue(true),
+				verifyMcpTool: vi.fn().mockResolvedValue({
+					valid: false,
+					pinned: false,
+					firstUse: false,
+					error: "Invalid signature",
+				}),
+			}
+
+			mockProviderRef.deref.mockReturnValue({
+				getMcpHub: () => ({
+					callTool: vi.fn().mockResolvedValue(mockToolResult),
+					getAllServers: vi.fn().mockReturnValue([
+						{
+							name: "test_server",
+							tools: [
+								{
+									name: "test_tool",
+									inputSchema: { type: "object", properties: { param: { type: "string" } } },
+								},
+							],
+						},
+					]),
+				}),
+				postMessageToWebview: vi.fn(),
+				context: {
+					globalState: {
+						get: vi.fn(),
+						update: vi.fn(),
+					},
+					globalStorageUri: {
+						fsPath: "/mock/path",
+					},
+				},
+				schemaPinService: mockSchemaPinService,
+			})
+
+			await useMcpToolTool(
+				mockTask as Task,
+				block,
+				mockAskApproval,
+				mockHandleError,
+				mockPushToolResult,
+				mockRemoveClosingTag,
+			)
+
+			expect(mockTask.say).toHaveBeenCalledWith("text", expect.stringContaining("Schema verification failed"))
+			// Tool should still execute despite verification failure
+			expect(mockTask.say).toHaveBeenCalledWith("mcp_server_response", "Tool executed successfully")
+		})
+
+		it("should skip verification when SchemaPin is disabled", async () => {
+			const block: ToolUse = {
+				type: "tool_use",
+				name: "use_mcp_tool",
+				params: {
+					server_name: "test_server",
+					tool_name: "test_tool",
+					arguments: '{"param": "value"}',
+				},
+				partial: false,
+			}
+
+			mockAskApproval.mockResolvedValue(true)
+
+			const mockToolResult = {
+				content: [{ type: "text", text: "Tool executed successfully" }],
+				isError: false,
+			}
+
+			const mockSchemaPinService = {
+				initialize: vi.fn().mockResolvedValue(undefined),
+				isEnabled: vi.fn().mockReturnValue(false),
+				verifyMcpTool: vi.fn(),
+			}
+
+			mockProviderRef.deref.mockReturnValue({
+				getMcpHub: () => ({
+					callTool: vi.fn().mockResolvedValue(mockToolResult),
+					getAllServers: vi.fn().mockReturnValue([
+						{
+							name: "test_server",
+							tools: [
+								{
+									name: "test_tool",
+									inputSchema: { type: "object", properties: { param: { type: "string" } } },
+								},
+							],
+						},
+					]),
+				}),
+				postMessageToWebview: vi.fn(),
+				context: {
+					globalState: {
+						get: vi.fn(),
+						update: vi.fn(),
+					},
+					globalStorageUri: {
+						fsPath: "/mock/path",
+					},
+				},
+				schemaPinService: mockSchemaPinService,
+			})
+
+			await useMcpToolTool(
+				mockTask as Task,
+				block,
+				mockAskApproval,
+				mockHandleError,
+				mockPushToolResult,
+				mockRemoveClosingTag,
+			)
+
+			expect(mockSchemaPinService.verifyMcpTool).not.toHaveBeenCalled()
+			expect(mockTask.say).toHaveBeenCalledWith("mcp_server_response", "Tool executed successfully")
+		})
+
+		it("should handle first-time key pinning", async () => {
+			const block: ToolUse = {
+				type: "tool_use",
+				name: "use_mcp_tool",
+				params: {
+					server_name: "test_server",
+					tool_name: "test_tool",
+					arguments: '{"param": "value"}',
+				},
+				partial: false,
+			}
+
+			mockAskApproval.mockResolvedValue(true)
+
+			const mockToolResult = {
+				content: [{ type: "text", text: "Tool executed successfully" }],
+				isError: false,
+			}
+
+			const mockSchemaPinService = {
+				initialize: vi.fn().mockResolvedValue(undefined),
+				isEnabled: vi.fn().mockReturnValue(true),
+				verifyMcpTool: vi.fn().mockResolvedValue({
+					valid: true,
+					pinned: true,
+					firstUse: true,
+				}),
+			}
+
+			mockProviderRef.deref.mockReturnValue({
+				getMcpHub: () => ({
+					callTool: vi.fn().mockResolvedValue(mockToolResult),
+					getAllServers: vi.fn().mockReturnValue([
+						{
+							name: "test_server",
+							tools: [
+								{
+									name: "test_tool",
+									inputSchema: { type: "object", properties: { param: { type: "string" } } },
+								},
+							],
+						},
+					]),
+				}),
+				postMessageToWebview: vi.fn(),
+				context: {
+					globalState: {
+						get: vi.fn(),
+						update: vi.fn(),
+					},
+					globalStorageUri: {
+						fsPath: "/mock/path",
+					},
+				},
+				schemaPinService: mockSchemaPinService,
+			})
+
+			await useMcpToolTool(
+				mockTask as Task,
+				block,
+				mockAskApproval,
+				mockHandleError,
+				mockPushToolResult,
+				mockRemoveClosingTag,
+			)
+
+			expect(mockTask.say).toHaveBeenCalledWith(
+				"text",
+				"🔐 Schema verified and key pinned for test_server/test_tool",
+			)
+		})
+
+		it("should continue execution when no schema is available", async () => {
+			const block: ToolUse = {
+				type: "tool_use",
+				name: "use_mcp_tool",
+				params: {
+					server_name: "test_server",
+					tool_name: "test_tool",
+					arguments: '{"param": "value"}',
+				},
+				partial: false,
+			}
+
+			mockAskApproval.mockResolvedValue(true)
+
+			const mockToolResult = {
+				content: [{ type: "text", text: "Tool executed successfully" }],
+				isError: false,
+			}
+
+			mockProviderRef.deref.mockReturnValue({
+				getMcpHub: () => ({
+					callTool: vi.fn().mockResolvedValue(mockToolResult),
+					getAllServers: vi.fn().mockReturnValue([
+						{
+							name: "test_server",
+							tools: [
+								{
+									name: "test_tool",
+									// No inputSchema provided
+								},
+							],
+						},
+					]),
+				}),
+				postMessageToWebview: vi.fn(),
+				context: {
+					globalState: {
+						get: vi.fn(),
+						update: vi.fn(),
+					},
+					globalStorageUri: {
+						fsPath: "/mock/path",
+					},
+				},
+			})
+
+			await useMcpToolTool(
+				mockTask as Task,
+				block,
+				mockAskApproval,
+				mockHandleError,
+				mockPushToolResult,
+				mockRemoveClosingTag,
+			)
+
+			// Should execute tool without verification
+			expect(mockTask.say).toHaveBeenCalledWith("mcp_server_response", "Tool executed successfully")
 		})
 	})
 })

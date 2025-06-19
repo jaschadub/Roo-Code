@@ -124,6 +124,14 @@
 	--color-vscode-inputValidation-infoBackground: var(--vscode-inputValidation-infoBackground);
 	--color-vscode-inputValidation-infoBorder: var(--vscode-inputValidation-infoBorder);
 
+	--color-vscode-inputValidation-warningForeground: var(--vscode-inputValidation-warningForeground);
+	--color-vscode-inputValidation-warningBackground: var(--vscode-inputValidation-warningBackground);
+	--color-vscode-inputValidation-warningBorder: var(--vscode-inputValidation-warningBorder);
+
+	--color-vscode-inputValidation-errorForeground: var(--vscode-inputValidation-errorForeground);
+	--color-vscode-inputValidation-errorBackground: var(--vscode-inputValidation-errorBackground);
+	--color-vscode-inputValidation-errorBorder: var(--vscode-inputValidation-errorBorder);
+
 	--color-vscode-widget-border: var(--vscode-widget-border);
 	--color-vscode-textLink-foreground: var(--vscode-textLink-foreground);
 	--color-vscode-textCodeBlock-background: var(--vscode-textCodeBlock-background);

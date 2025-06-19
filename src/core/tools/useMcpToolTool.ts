@@ -4,6 +4,7 @@ import { formatResponse } from "../prompts/responses"
 import { ClineAskUseMcpServer } from "../../shared/ExtensionMessage"
 import { McpExecutionStatus } from "@roo-code/types"
 import { t } from "../../i18n"
+import { SchemaPinService, McpToolVerificationContext } from "../../services/schemapin"
 
 interface McpToolParams {
 	server_name?: string
@@ -127,7 +128,24 @@ async function executeToolAndProcessResult(
 		toolName,
 	})
 
-	const toolResult = await cline.providerRef.deref()?.getMcpHub()?.callTool(serverName, toolName, parsedArguments)
+	// Perform schema verification if SchemaPin is enabled
+	const provider = cline.providerRef.deref()
+	const mcpHub = provider?.getMcpHub()
+
+	if (mcpHub) {
+		try {
+			await performSchemaVerification(cline, serverName, toolName, mcpHub)
+		} catch (verificationError) {
+			// Log verification failure but continue with tool execution
+			console.warn(`SchemaPin verification failed for ${serverName}/${toolName}:`, verificationError)
+			await cline.say(
+				"text",
+				`⚠️ Schema verification failed: ${verificationError instanceof Error ? verificationError.message : String(verificationError)}`,
+			)
+		}
+	}
+
+	const toolResult = await mcpHub?.callTool(serverName, toolName, parsedArguments)
 
 	let toolResultPretty = "(No response)"
 
@@ -162,6 +180,108 @@ async function executeToolAndProcessResult(
 
 	await cline.say("mcp_server_response", toolResultPretty)
 	pushToolResult(formatResponse.toolResult(toolResultPretty))
+}
+
+async function performSchemaVerification(
+	cline: Task,
+	serverName: string,
+	toolName: string,
+	mcpHub: any,
+): Promise<void> {
+	// Get SchemaPin service from provider context
+	const provider = cline.providerRef.deref()
+	if (!provider?.context) {
+		return // No context available, skip verification
+	}
+
+	// Initialize SchemaPin service if not already done
+	let schemaPinService: SchemaPinService
+	try {
+		// Check if SchemaPin service is already initialized in the provider
+		const existingService = (provider as any).schemaPinService
+		if (existingService) {
+			schemaPinService = existingService
+		} else {
+			// Create and initialize new SchemaPin service
+			schemaPinService = new SchemaPinService(provider.context, {
+				enabled: true,
+				verifyOnToolCall: true,
+				autoPin: false, // Require user confirmation for key pinning
+				pinningMode: "interactive",
+			})
+			await schemaPinService.initialize()
+
+			// Store service in provider for reuse
+			;(provider as any).schemaPinService = schemaPinService
+		}
+	} catch (error) {
+		console.warn("Failed to initialize SchemaPin service:", error)
+		return // Skip verification if service can't be initialized
+	}
+
+	// Skip verification if SchemaPin is disabled
+	if (!schemaPinService.isEnabled()) {
+		return
+	}
+
+	// Get tool schema from MCP server
+	const servers = mcpHub.getAllServers()
+	const server = servers.find((s: any) => s.name === serverName)
+	if (!server?.tools) {
+		return // No tools available, skip verification
+	}
+
+	const tool = server.tools.find((t: any) => t.name === toolName)
+	if (!tool?.inputSchema) {
+		return // No schema available, skip verification
+	}
+
+	// Create verification context
+	const verificationContext: McpToolVerificationContext = {
+		serverName,
+		toolName,
+		schema: tool.inputSchema,
+		// Note: signature would come from the MCP server if it supports SchemaPin
+		// For now, we'll handle the case where no signature is provided
+		signature: undefined,
+		domain: extractDomainFromServerName(serverName),
+		toolId: `${serverName}/${toolName}`,
+	}
+
+	try {
+		// Perform verification
+		const result = await schemaPinService.verifyMcpTool(verificationContext)
+
+		if (result.valid) {
+			if (result.firstUse) {
+				await cline.say("text", `🔐 Schema verified and key pinned for ${serverName}/${toolName}`)
+			} else {
+				await cline.say("text", `✅ Schema verified for ${serverName}/${toolName}`)
+			}
+		} else if (result.error) {
+			// Verification failed - this is a security concern
+			throw new Error(`Schema verification failed: ${result.error}`)
+		}
+	} catch (error) {
+		// Re-throw verification errors to be handled by caller
+		throw error
+	}
+}
+
+function extractDomainFromServerName(serverName: string): string {
+	// Try to extract domain from server name
+	const urlMatch = serverName.match(/https?:\/\/([^\/]+)/)
+	if (urlMatch) {
+		return urlMatch[1]
+	}
+
+	// Check if it looks like a domain
+	if (serverName.includes(".") && !serverName.includes("/")) {
+		return serverName
+	}
+
+	// Fallback to using the server name as domain
+	return serverName
 }
 
 export async function useMcpToolTool(
