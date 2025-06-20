@@ -42,6 +42,19 @@ export interface ExtensionStateContextType extends ExtensionState {
 	setCondensingApiConfigId: (value: string) => void
 	customCondensingPrompt?: string
 	setCustomCondensingPrompt: (value: string) => void
+	// SchemaPin settings
+	schemaPinEnabled?: boolean
+	schemaPinStrictMode?: boolean
+	schemaPinAutoPin?: boolean
+	schemaPinVerificationTimeout?: number
+	schemaPinTrustedDomains?: string[]
+	schemaPinBlockedDomains?: string[]
+	setSchemaPinEnabled: (value: boolean) => void
+	setSchemaPinStrictMode: (value: boolean) => void
+	setSchemaPinAutoPin: (value: boolean) => void
+	setSchemaPinVerificationTimeout: (value: number) => void
+	setSchemaPinTrustedDomains: (value: string[]) => void
+	setSchemaPinBlockedDomains: (value: string[]) => void
 	setApiConfiguration: (config: ProviderSettings) => void
 	setCustomInstructions: (value?: string) => void
 	setAlwaysAllowReadOnly: (value: boolean) => void
@@ -404,6 +417,16 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 		setCondensingApiConfigId: (value) => setState((prevState) => ({ ...prevState, condensingApiConfigId: value })),
 		setCustomCondensingPrompt: (value) =>
 			setState((prevState) => ({ ...prevState, customCondensingPrompt: value })),
+		// SchemaPin setters
+		setSchemaPinEnabled: (value) => setState((prevState) => ({ ...prevState, schemaPinEnabled: value })),
+		setSchemaPinStrictMode: (value) => setState((prevState) => ({ ...prevState, schemaPinStrictMode: value })),
+		setSchemaPinAutoPin: (value) => setState((prevState) => ({ ...prevState, schemaPinAutoPin: value })),
+		setSchemaPinVerificationTimeout: (value) =>
+			setState((prevState) => ({ ...prevState, schemaPinVerificationTimeout: value })),
+		setSchemaPinTrustedDomains: (value) =>
+			setState((prevState) => ({ ...prevState, schemaPinTrustedDomains: value })),
+		setSchemaPinBlockedDomains: (value) =>
+			setState((prevState) => ({ ...prevState, schemaPinBlockedDomains: value })),
 	}
 
 	return <ExtensionStateContext.Provider value={contextValue}>{children}</ExtensionStateContext.Provider>

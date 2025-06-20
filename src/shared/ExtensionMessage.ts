@@ -250,6 +250,14 @@ export type ExtensionState = Pick<
 	autoCondenseContextPercent: number
 	marketplaceItems?: MarketplaceItem[]
 	marketplaceInstalledMetadata?: { project: Record<string, any>; global: Record<string, any> }
+
+	// SchemaPin settings
+	schemaPinEnabled?: boolean
+	schemaPinStrictMode?: boolean
+	schemaPinAutoPin?: boolean
+	schemaPinVerificationTimeout?: number
+	schemaPinTrustedDomains?: string[]
+	schemaPinBlockedDomains?: string[]
 }
 
 export interface ClineSayTool {

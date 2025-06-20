@@ -717,6 +717,9 @@ importers:
       say:
         specifier: ^0.16.0
         version: 0.16.0
+      schemapin:
+        specifier: ^1.0.0
+        version: 1.1.4
       serialize-error:
         specifier: ^11.0.3
         version: 11.0.3
@@ -8231,6 +8234,12 @@ packages:
 
   scheduler@0.23.2:
     resolution: {integrity: sha512-UOShsPwz7NrMUqhR6t0hWjFduvOzbtv7toDH1/hIrfRNIDBnnBWd0CwJTGvTpngVlmwGCdP9/Zl/tVrDqcuYzQ==}
+
+  schemapin@1.1.4:
+    resolution: {integrity: sha512-eOCIVHM6Oa2/Fio0+ubmHPaLRVPswpy4YDD1JFQOXpidzhh69KZcj7YHDxvw/h2eoBxnB5DbWqzM75bexFYfKg==}
+    engines: {node: '>=18.0.0', npm: '>=8.0.0'}
+    cpu: [x64, arm64]
+    os: [darwin, linux, win32]
 
   screenfull@5.2.0:
     resolution: {integrity: sha512-9BakfsO2aUQN2K9Fdbj87RJIEZ82Q9IGim7FqM5OsebfoFC6ZHXgDq/KvniuLTPdeM8wY2o6Dj3WQ7KeQCj3cA==}
@@ -17992,6 +18001,8 @@ snapshots:
   scheduler@0.23.2:
     dependencies:
       loose-envify: 1.4.0
+
+  schemapin@1.1.4: {}
 
   screenfull@5.2.0: {}
 

@@ -4,16 +4,37 @@ import { McpTool } from "@roo/mcp"
 
 import { useAppTranslation } from "@src/i18n/TranslationContext"
 import { vscode } from "@src/utils/vscode"
+import { SchemaSecurityBadge, SecurityStatus } from "./SchemaSecurityBadge"
+import { VerificationResult } from "@src/types/schemapin"
 
 type McpToolRowProps = {
 	tool: McpTool
 	serverName?: string
 	serverSource?: "global" | "project"
 	alwaysAllowMcp?: boolean
+	verificationResult?: VerificationResult
+	domain?: string
+	onShowVerificationDetails?: () => void
 }
 
-const McpToolRow = ({ tool, serverName, serverSource, alwaysAllowMcp }: McpToolRowProps) => {
+const McpToolRow = ({
+	tool,
+	serverName,
+	serverSource,
+	alwaysAllowMcp,
+	verificationResult,
+	domain,
+	onShowVerificationDetails,
+}: McpToolRowProps) => {
 	const { t } = useAppTranslation()
+
+	const getSecurityStatus = (): SecurityStatus => {
+		if (!verificationResult) return "unverified"
+		if (!verificationResult.valid) return "failed"
+		if (verificationResult.pinned) return "pinned"
+		return "verified"
+	}
+
 	const handleAlwaysAllowChange = () => {
 		if (!serverName) return
 		vscode.postMessage({
@@ -35,9 +56,30 @@ const McpToolRow = ({ tool, serverName, serverSource, alwaysAllowMcp }: McpToolR
 				data-testid="tool-row-container"
 				style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}
 				onClick={(e) => e.stopPropagation()}>
-				<div style={{ display: "flex", alignItems: "center" }}>
-					<span className="codicon codicon-symbol-method" style={{ marginRight: "6px" }}></span>
-					<span style={{ fontWeight: 500 }}>{tool.name}</span>
+				<div className="flex items-center gap-2">
+					<span className="codicon codicon-symbol-method" />
+					<span className="font-medium">{tool.name}</span>
+					{verificationResult && (
+						<SchemaSecurityBadge
+							status={getSecurityStatus()}
+							domain={domain}
+							fingerprint={verificationResult.keyFingerprint}
+							error={verificationResult.error}
+							className="ml-2"
+						/>
+					)}
+					{onShowVerificationDetails && verificationResult && (
+						<button
+							onClick={(e) => {
+								e.stopPropagation()
+								onShowVerificationDetails()
+							}}
+							className="ml-1 p-1 rounded hover:bg-vscode-toolbar-hoverBackground transition-colors"
+							title="Show verification details"
+							aria-label="Show schema verification details">
+							<span className="codicon codicon-info text-xs" />
+						</button>
+					)}
 				</div>
 				{serverName && alwaysAllowMcp && (
 					<VSCodeCheckbox checked={tool.alwaysAllow} onChange={handleAlwaysAllowChange} data-tool={tool.name}>
