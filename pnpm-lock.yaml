@@ -62,15 +62,15 @@ importers:
 
   apps/vscode-e2e:
     devDependencies:
-      '@roo-code/config-eslint':
-        specifier: workspace:^
-        version: link:../../packages/config-eslint
-      '@roo-code/config-typescript':
-        specifier: workspace:^
-        version: link:../../packages/config-typescript
       '@roo-code/types':
         specifier: workspace:^
         version: link:../../packages/types
+      '@rook-code/config-eslint':
+        specifier: workspace:^
+        version: link:../../packages/config-eslint
+      '@rook-code/config-typescript':
+        specifier: workspace:^
+        version: link:../../packages/config-typescript
       '@types/mocha':
         specifier: ^10.0.10
         version: 10.0.10
@@ -101,7 +101,7 @@ importers:
 
   apps/vscode-nightly:
     devDependencies:
-      '@roo-code/build':
+      '@rook-code/build':
         specifier: workspace:^
         version: link:../../packages/build
 
@@ -210,10 +210,10 @@ importers:
         specifier: ^3.25.61
         version: 3.25.61
     devDependencies:
-      '@roo-code/config-eslint':
+      '@rook-code/config-eslint':
         specifier: workspace:^
         version: link:../../packages/config-eslint
-      '@roo-code/config-typescript':
+      '@rook-code/config-typescript':
         specifier: workspace:^
         version: link:../../packages/config-typescript
       '@tailwindcss/postcss':
@@ -304,10 +304,10 @@ importers:
         specifier: ^3.25.61
         version: 3.25.61
     devDependencies:
-      '@roo-code/config-eslint':
+      '@rook-code/config-eslint':
         specifier: workspace:^
         version: link:../../packages/config-eslint
-      '@roo-code/config-typescript':
+      '@rook-code/config-typescript':
         specifier: workspace:^
         version: link:../../packages/config-typescript
       '@tailwindcss/typography':
@@ -338,10 +338,10 @@ importers:
         specifier: ^3.25.61
         version: 3.25.61
     devDependencies:
-      '@roo-code/config-eslint':
+      '@rook-code/config-eslint':
         specifier: workspace:^
         version: link:../config-eslint
-      '@roo-code/config-typescript':
+      '@rook-code/config-typescript':
         specifier: workspace:^
         version: link:../config-typescript
       '@types/node':
@@ -353,12 +353,12 @@ importers:
 
   packages/cloud:
     dependencies:
-      '@roo-code/telemetry':
-        specifier: workspace:^
-        version: link:../telemetry
       '@roo-code/types':
         specifier: workspace:^
         version: link:../types
+      '@rook-code/telemetry':
+        specifier: workspace:^
+        version: link:../telemetry
       axios:
         specifier: ^1.7.4
         version: 1.9.0
@@ -366,10 +366,10 @@ importers:
         specifier: ^3.25.61
         version: 3.25.61
     devDependencies:
-      '@roo-code/config-eslint':
+      '@rook-code/config-eslint':
         specifier: workspace:^
         version: link:../config-eslint
-      '@roo-code/config-typescript':
+      '@rook-code/config-typescript':
         specifier: workspace:^
         version: link:../config-typescript
       '@types/node':
@@ -419,12 +419,12 @@ importers:
 
   packages/evals:
     dependencies:
-      '@roo-code/ipc':
-        specifier: workspace:^
-        version: link:../ipc
       '@roo-code/types':
         specifier: workspace:^
         version: link:../types
+      '@rook-code/ipc':
+        specifier: workspace:^
+        version: link:../ipc
       cmd-ts:
         specifier: ^0.13.0
         version: 0.13.0
@@ -459,10 +459,10 @@ importers:
         specifier: ^3.25.61
         version: 3.25.61
     devDependencies:
-      '@roo-code/config-eslint':
+      '@rook-code/config-eslint':
         specifier: workspace:^
         version: link:../config-eslint
-      '@roo-code/config-typescript':
+      '@rook-code/config-typescript':
         specifier: workspace:^
         version: link:../config-typescript
       '@types/node':
@@ -493,10 +493,10 @@ importers:
         specifier: ^12.0.0
         version: 12.0.0
     devDependencies:
-      '@roo-code/config-eslint':
+      '@rook-code/config-eslint':
         specifier: workspace:^
         version: link:../config-eslint
-      '@roo-code/config-typescript':
+      '@rook-code/config-typescript':
         specifier: workspace:^
         version: link:../config-typescript
       '@types/node':
@@ -521,10 +521,10 @@ importers:
         specifier: ^3.25.61
         version: 3.25.61
     devDependencies:
-      '@roo-code/config-eslint':
+      '@rook-code/config-eslint':
         specifier: workspace:^
         version: link:../config-eslint
-      '@roo-code/config-typescript':
+      '@rook-code/config-typescript':
         specifier: workspace:^
         version: link:../config-typescript
       '@types/node':
@@ -543,10 +543,10 @@ importers:
         specifier: ^3.25.61
         version: 3.25.61
     devDependencies:
-      '@roo-code/config-eslint':
+      '@rook-code/config-eslint':
         specifier: workspace:^
         version: link:../config-eslint
-      '@roo-code/config-typescript':
+      '@rook-code/config-typescript':
         specifier: workspace:^
         version: link:../config-typescript
       '@types/node':
@@ -588,18 +588,18 @@ importers:
       '@qdrant/js-client-rest':
         specifier: ^1.14.0
         version: 1.14.0(typescript@5.8.3)
-      '@roo-code/cloud':
-        specifier: workspace:^
-        version: link:../packages/cloud
-      '@roo-code/ipc':
-        specifier: workspace:^
-        version: link:../packages/ipc
-      '@roo-code/telemetry':
-        specifier: workspace:^
-        version: link:../packages/telemetry
       '@roo-code/types':
         specifier: workspace:^
         version: link:../packages/types
+      '@rook-code/cloud':
+        specifier: workspace:^
+        version: link:../packages/cloud
+      '@rook-code/ipc':
+        specifier: workspace:^
+        version: link:../packages/ipc
+      '@rook-code/telemetry':
+        specifier: workspace:^
+        version: link:../packages/telemetry
       '@types/lodash.debounce':
         specifier: ^4.0.9
         version: 4.0.9
@@ -769,13 +769,13 @@ importers:
         specifier: ^3.25.61
         version: 3.25.61
     devDependencies:
-      '@roo-code/build':
+      '@rook-code/build':
         specifier: workspace:^
         version: link:../packages/build
-      '@roo-code/config-eslint':
+      '@rook-code/config-eslint':
         specifier: workspace:^
         version: link:../packages/config-eslint
-      '@roo-code/config-typescript':
+      '@rook-code/config-typescript':
         specifier: workspace:^
         version: link:../packages/config-typescript
       '@types/clone-deep':
@@ -1043,10 +1043,10 @@ importers:
         specifier: ^3.25.61
         version: 3.25.61
     devDependencies:
-      '@roo-code/config-eslint':
+      '@rook-code/config-eslint':
         specifier: workspace:^
         version: link:../packages/config-eslint
-      '@roo-code/config-typescript':
+      '@rook-code/config-typescript':
         specifier: workspace:^
         version: link:../packages/config-typescript
       '@testing-library/jest-dom':
@@ -8238,7 +8238,6 @@ packages:
   schemapin@1.1.4:
     resolution: {integrity: sha512-eOCIVHM6Oa2/Fio0+ubmHPaLRVPswpy4YDD1JFQOXpidzhh69KZcj7YHDxvw/h2eoBxnB5DbWqzM75bexFYfKg==}
     engines: {node: '>=18.0.0', npm: '>=8.0.0'}
-    cpu: [x64, arm64]
     os: [darwin, linux, win32]
 
   screenfull@5.2.0:

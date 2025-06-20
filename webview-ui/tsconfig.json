@@ -22,7 +22,8 @@
 		"paths": {
 			"@/*": ["./src/*"],
 			"@src/*": ["./src/*"],
-			"@roo/*": ["../src/shared/*"]
+			"@roo/*": ["../src/shared/*"],
+			"@roo-code/types": ["../packages/types/src/index.ts"]
 		}
 	},
 	"include": ["src", "../src/shared", "vitest.setup.ts"]

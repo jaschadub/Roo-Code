@@ -11,7 +11,7 @@ vi.mock("os", () => ({
 	platform: vi.fn(),
 }))
 
-vi.mock("@roo-code/cloud", () => ({
+vi.mock("@rook-code/cloud", () => ({
 	CloudService: {
 		hasInstance: vi.fn(),
 		instance: {
@@ -35,7 +35,7 @@ vi.mock("vscode", () => ({
 vi.mock("../../../shared/package", () => ({
 	Package: {
 		publisher: "roo-code",
-		name: "roo-cline",
+		name: "rook-code",
 		version: "1.0.0",
 		outputChannel: "Roo-Code",
 		sha: undefined,
@@ -46,7 +46,7 @@ import * as fs from "fs"
 import * as os from "os"
 import * as vscode from "vscode"
 import { MdmService } from "../MdmService"
-import { CloudService, getClerkBaseUrl, PRODUCTION_CLERK_BASE_URL } from "@roo-code/cloud"
+import { CloudService, getClerkBaseUrl, PRODUCTION_CLERK_BASE_URL } from "@rook-code/cloud"
 
 const mockFs = fs as any
 const mockOs = os as any
@@ -327,7 +327,7 @@ describe("MdmService", () => {
 
 			await MdmService.createInstance()
 
-			expect(mockVscode.workspace.getConfiguration).toHaveBeenCalledWith("roo-cline")
+			expect(mockVscode.workspace.getConfiguration).toHaveBeenCalledWith("rook-code")
 			expect(mockVsCodeConfig.get).toHaveBeenCalledWith("rooCodeCloudEnabled", false)
 			expect(mockVsCodeConfig.update).toHaveBeenCalledWith("rooCodeCloudEnabled", true, 1) // ConfigurationTarget.Global
 		})

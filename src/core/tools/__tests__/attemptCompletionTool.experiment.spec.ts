@@ -3,7 +3,7 @@ vi.mock("../executeCommandTool", () => ({
 	executeCommand: vi.fn(),
 }))
 
-vi.mock("@roo-code/telemetry", () => ({
+vi.mock("@rook-code/telemetry", () => ({
 	TelemetryService: {
 		instance: {
 			captureTaskCompleted: vi.fn(),

@@ -13,7 +13,7 @@ import {
 	EVALS_SETTINGS,
 	EVALS_TIMEOUT,
 } from "@roo-code/types"
-import { IpcClient } from "@roo-code/ipc"
+import { IpcClient } from "@rook-code/ipc"
 
 import {
 	type Run,

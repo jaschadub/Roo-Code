@@ -12,7 +12,7 @@
 	"devDependencies": {
 		"@rook-code/config-eslint": "workspace:^",
 		"@rook-code/config-typescript": "workspace:^",
-		"@rook-code/types": "workspace:^",
+		"@roo-code/types": "workspace:^",
 		"@types/mocha": "^10.0.10",
 		"@types/node": "20.x",
 		"@types/vscode": "^1.95.0",

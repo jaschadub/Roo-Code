@@ -1,5 +1,5 @@
 import { TelemetryEventName, type TelemetryEvent, rooCodeTelemetryEventSchema } from "@roo-code/types"
-import { BaseTelemetryClient } from "@roo-code/telemetry"
+import { BaseTelemetryClient } from "@rook-code/telemetry"
 
 import { getRooCodeApiUrl } from "./Config"
 import { AuthService } from "./AuthService"

@@ -1,5 +1,5 @@
 {
-	"name": "@rook-code/evals",
+	"name": "@roo-code/evals",
 	"description": "Roo Code evals.",
 	"version": "0.0.0",
 	"type": "module",
@@ -26,7 +26,7 @@
 	},
 	"dependencies": {
 		"@rook-code/ipc": "workspace:^",
-		"@rook-code/types": "workspace:^",
+		"@roo-code/types": "workspace:^",
 		"cmd-ts": "^0.13.0",
 		"drizzle-orm": "^0.44.1",
 		"execa": "^9.6.0",

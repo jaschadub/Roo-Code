@@ -15,7 +15,7 @@ import {
 	globalSettingsSchema,
 	isSecretStateKey,
 } from "@roo-code/types"
-import { TelemetryService } from "@roo-code/telemetry"
+import { TelemetryService } from "@rook-code/telemetry"
 
 import { logger } from "../../utils/logging"
 

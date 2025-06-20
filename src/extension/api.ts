@@ -16,7 +16,7 @@ import {
 	TaskCommandName,
 	TaskEvent,
 } from "@roo-code/types"
-import { IpcServer } from "@roo-code/ipc"
+import { IpcServer } from "@rook-code/ipc"
 
 import { Package } from "../shared/package"
 import { getWorkspacePath } from "../utils/path"

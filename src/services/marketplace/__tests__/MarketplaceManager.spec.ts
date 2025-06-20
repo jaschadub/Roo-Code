@@ -8,7 +8,7 @@ import { MarketplaceManager } from "../MarketplaceManager"
 vi.mock("axios")
 
 // Mock the cloud config
-vi.mock("@roo-code/cloud", () => ({
+vi.mock("@rook-code/cloud", () => ({
 	getRooCodeApiUrl: () => "https://test.api.com",
 }))
 

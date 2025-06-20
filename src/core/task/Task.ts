@@ -21,8 +21,8 @@ import {
 	type HistoryItem,
 	TelemetryEventName,
 } from "@roo-code/types"
-import { TelemetryService } from "@roo-code/telemetry"
-import { CloudService } from "@roo-code/cloud"
+import { TelemetryService } from "@rook-code/telemetry"
+import { CloudService } from "@rook-code/cloud"
 
 // api
 import { ApiHandler, ApiHandlerCreateMessageMetadata, buildApiHandler } from "../../api"

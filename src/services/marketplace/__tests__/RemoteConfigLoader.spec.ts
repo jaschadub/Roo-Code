@@ -9,7 +9,7 @@ vi.mock("axios")
 const mockedAxios = axios as any
 
 // Mock the cloud config
-vi.mock("@roo-code/cloud", () => ({
+vi.mock("@rook-code/cloud", () => ({
 	getRooCodeApiUrl: () => "https://test.api.com",
 }))
 

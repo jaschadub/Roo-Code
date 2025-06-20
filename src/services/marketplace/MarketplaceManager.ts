@@ -8,7 +8,7 @@ import type { MarketplaceItem, MarketplaceItemType } from "@roo-code/types"
 import { GlobalFileNames } from "../../shared/globalFileNames"
 import { ensureSettingsDirectoryExists } from "../../utils/globalContext"
 import { t } from "../../i18n"
-import { TelemetryService } from "@roo-code/telemetry"
+import { TelemetryService } from "@rook-code/telemetry"
 
 export class MarketplaceManager {
 	private configLoader: RemoteConfigLoader

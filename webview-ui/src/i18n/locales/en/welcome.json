@@ -1,6 +1,6 @@
 {
-	"greeting": "Welcome to Roo Code!",
-	"introduction": "With a range of built-in and extensible Modes, Roo Code lets you plan, architect, code, debug and boost your productivity like never before.",
+	"greeting": "Welcome to Rook Code!",
+	"introduction": "With a range of built-in and extensible Modes, Rook Code lets you plan, architect, code, debug and boost your productivity like never before. Built with security-first design and comprehensive input validation.",
 	"notice": "To get started, this extension needs an API provider.",
 	"start": "Let's go!",
 	"routers": {
@@ -13,15 +13,7 @@
 		}
 	},
 	"chooseProvider": "To do its magic, Roo needs an API key.",
-	"startRouter": "We recommend using an LLM Router:",
+	"startRouter": "Choose an LLM Router:",
 	"startCustom": "Or you can bring your provider API key:",
-	"telemetry": {
-		"title": "Help Improve Roo Code",
-		"anonymousTelemetry": "Send anonymous error and usage data to help us fix bugs and improve the extension. No code, prompts, or personal information is ever sent.",
-		"changeSettings": "You can always change this at the bottom of the <settingsLink>settings</settingsLink>",
-		"settings": "settings",
-		"allow": "Allow",
-		"deny": "Deny"
-	},
 	"importSettings": "Import Settings"
 }

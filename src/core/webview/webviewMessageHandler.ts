@@ -4,8 +4,8 @@ import pWaitFor from "p-wait-for"
 import * as vscode from "vscode"
 
 import { type Language, type ProviderSettings, type GlobalState, TelemetryEventName } from "@roo-code/types"
-import { CloudService } from "@roo-code/cloud"
-import { TelemetryService } from "@roo-code/telemetry"
+import { CloudService } from "@rook-code/cloud"
+import { TelemetryService } from "@rook-code/telemetry"
 
 import { ClineProvider } from "./ClineProvider"
 import { changeLanguage, t } from "../../i18n"

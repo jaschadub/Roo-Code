@@ -6,7 +6,7 @@ import {
 	providerSettingsSchema,
 	providerSettingsSchemaDiscriminated,
 } from "@roo-code/types"
-import { TelemetryService } from "@roo-code/telemetry"
+import { TelemetryService } from "@rook-code/telemetry"
 
 import { Mode, modes } from "../../shared/modes"
 

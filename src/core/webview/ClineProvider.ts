@@ -28,8 +28,8 @@ import {
 	glamaDefaultModelId,
 	ORGANIZATION_ALLOW_ALL,
 } from "@roo-code/types"
-import { TelemetryService } from "@roo-code/telemetry"
-import { CloudService } from "@roo-code/cloud"
+import { TelemetryService } from "@rook-code/telemetry"
+import { CloudService } from "@rook-code/cloud"
 
 import { t } from "../../i18n"
 import { setPanel } from "../../activate/registerCommands"

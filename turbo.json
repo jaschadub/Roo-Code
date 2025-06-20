@@ -4,7 +4,7 @@
 		"lint": {},
 		"check-types": {},
 		"test": {
-			"dependsOn": ["@rook-code/types#build"]
+			"dependsOn": ["@roo-code/types#build"]
 		},
 		"format": {},
 		"clean": {
@@ -13,6 +13,11 @@
 		"build": {
 			"outputs": ["dist/**"],
 			"inputs": ["src/**", "package.json", "tsconfig.json", "tsup.config.ts", "vite.config.ts"]
+		},
+		"@rook-code/vscode-webview#build": {
+			"dependsOn": ["@roo-code/types#build"],
+			"outputs": ["dist/**"],
+			"inputs": ["src/**", "package.json", "tsconfig.json", "vite.config.ts"]
 		},
 		"watch:tsc": {
 			"cache": false
