@@ -1,10 +1,10 @@
 {
-	"name": "@roo-code/types",
+	"name": "@rook-code/types",
 	"version": "1.27.0",
 	"description": "TypeScript type definitions for Roo Code.",
 	"publishConfig": {
 		"access": "public",
-		"name": "@roo-code/types"
+		"name": "@rook-code/types"
 	},
 	"author": "Roo Code Team",
 	"license": "MIT",
@@ -18,7 +18,7 @@
 	"homepage": "https://github.com/RooCodeInc/Roo-Code/tree/main/packages/types",
 	"keywords": [
 		"roo",
-		"roo-code",
+		"rook-code",
 		"ai"
 	],
 	"main": "./dist/index.cjs",

@@ -1,5 +1,5 @@
 {
-	"name": "@roo-code/telemetry",
+	"name": "@rook-code/telemetry",
 	"description": "Roo Code telemetry service and clients.",
 	"version": "0.0.0",
 	"type": "module",
@@ -11,13 +11,13 @@
 		"clean": "rimraf dist .turbo"
 	},
 	"dependencies": {
-		"@roo-code/types": "workspace:^",
+		"@rook-code/types": "workspace:^",
 		"posthog-node": "^5.0.0",
 		"zod": "^3.25.61"
 	},
 	"devDependencies": {
-		"@roo-code/config-eslint": "workspace:^",
-		"@roo-code/config-typescript": "workspace:^",
+		"@rook-code/config-eslint": "workspace:^",
+		"@rook-code/config-typescript": "workspace:^",
 		"@types/node": "20.x",
 		"@types/vscode": "^1.84.0",
 		"vitest": "^3.2.3"

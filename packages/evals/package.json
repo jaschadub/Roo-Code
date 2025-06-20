@@ -1,5 +1,5 @@
 {
-	"name": "@roo-code/evals",
+	"name": "@rook-code/evals",
 	"description": "Roo Code evals.",
 	"version": "0.0.0",
 	"type": "module",
@@ -25,8 +25,8 @@
 		"services:start": "docker compose up -d db redis"
 	},
 	"dependencies": {
-		"@roo-code/ipc": "workspace:^",
-		"@roo-code/types": "workspace:^",
+		"@rook-code/ipc": "workspace:^",
+		"@rook-code/types": "workspace:^",
 		"cmd-ts": "^0.13.0",
 		"drizzle-orm": "^0.44.1",
 		"execa": "^9.6.0",
@@ -40,8 +40,8 @@
 		"zod": "^3.25.61"
 	},
 	"devDependencies": {
-		"@roo-code/config-eslint": "workspace:^",
-		"@roo-code/config-typescript": "workspace:^",
+		"@rook-code/config-eslint": "workspace:^",
+		"@rook-code/config-typescript": "workspace:^",
 		"@types/node": "20.x",
 		"@types/node-ipc": "^9.2.3",
 		"@types/ps-tree": "^1.1.6",
