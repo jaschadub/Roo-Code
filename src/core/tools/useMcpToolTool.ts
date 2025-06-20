@@ -5,6 +5,21 @@ import { ClineAskUseMcpServer } from "../../shared/ExtensionMessage"
 import { McpExecutionStatus } from "@roo-code/types"
 import { t } from "../../i18n"
 import { SchemaPinService, McpToolVerificationContext } from "../../services/schemapin"
+import {
+	validateMcpToolParams,
+	SecurityLevel,
+	getSecurityManager,
+	processValidationResult,
+	createSecurityErrorMessage,
+	sanitizeErrorMessage,
+	AuditLogger,
+	AuditEventType,
+	AuditSeverity,
+	SecurityMonitor,
+	AnomalyDetector,
+	type ValidationResult,
+	type McpToolParams as SecureMcpToolParams,
+} from "../../utils/security"
 
 interface McpToolParams {
 	server_name?: string
@@ -12,8 +27,8 @@ interface McpToolParams {
 	arguments?: string
 }
 
-type ValidationResult =
-	| { isValid: false }
+type LegacyValidationResult =
+	| { isValid: false; securityViolations?: Array<{ field: string; violation: string; severity: string }> }
 	| {
 			isValid: true
 			serverName: string
@@ -40,44 +55,89 @@ async function validateParams(
 	cline: Task,
 	params: McpToolParams,
 	pushToolResult: PushToolResult,
-): Promise<ValidationResult> {
-	if (!params.server_name) {
+): Promise<LegacyValidationResult> {
+	// Get security manager and determine security level
+	const securityManager = getSecurityManager()
+	const securityLevel = params.server_name
+		? securityManager.getSecurityLevelForServer(params.server_name)
+		: SecurityLevel.MODERATE
+
+	// Perform comprehensive security validation
+	const validationResult = validateMcpToolParams(params, securityLevel, {
+		toolName: params.tool_name,
+		serverName: params.server_name,
+	})
+
+	// Process validation result through security manager
+	const processedResult = processValidationResult(validationResult, params.server_name || "unknown", params.tool_name)
+
+	if (!processedResult.success) {
 		cline.consecutiveMistakeCount++
 		cline.recordToolError("use_mcp_tool")
-		pushToolResult(await cline.sayAndCreateMissingParamError("use_mcp_tool", "server_name"))
-		return { isValid: false }
-	}
 
-	if (!params.tool_name) {
-		cline.consecutiveMistakeCount++
-		cline.recordToolError("use_mcp_tool")
-		pushToolResult(await cline.sayAndCreateMissingParamError("use_mcp_tool", "tool_name"))
-		return { isValid: false }
-	}
-
-	let parsedArguments: Record<string, unknown> | undefined
-
-	if (params.arguments) {
-		try {
-			parsedArguments = JSON.parse(params.arguments)
-		} catch (error) {
-			cline.consecutiveMistakeCount++
-			cline.recordToolError("use_mcp_tool")
-			await cline.say("error", t("mcp:errors.invalidJsonArgument", { toolName: params.tool_name }))
-
-			pushToolResult(
-				formatResponse.toolError(
-					formatResponse.invalidMcpToolArgumentError(params.server_name, params.tool_name),
-				),
+		// Handle security violations
+		if (processedResult.securityViolations && processedResult.securityViolations.length > 0) {
+			const errorMessage = createSecurityErrorMessage(
+				processedResult.securityViolations,
+				params.server_name || "unknown",
 			)
+
+			await cline.say("error", errorMessage)
+			pushToolResult(formatResponse.toolError(errorMessage))
+
+			return {
+				isValid: false,
+				securityViolations: processedResult.securityViolations,
+			}
+		}
+
+		// Handle validation errors
+		if (processedResult.errors) {
+			const sanitizedError = sanitizeErrorMessage(processedResult.errors)
+			await cline.say("error", sanitizedError)
+			pushToolResult(formatResponse.toolError(sanitizedError))
 			return { isValid: false }
+		}
+
+		// Fallback for missing parameters (backward compatibility)
+		if (!params.server_name) {
+			pushToolResult(await cline.sayAndCreateMissingParamError("use_mcp_tool", "server_name"))
+			return { isValid: false }
+		}
+
+		if (!params.tool_name) {
+			pushToolResult(await cline.sayAndCreateMissingParamError("use_mcp_tool", "tool_name"))
+			return { isValid: false }
+		}
+
+		// Generic validation failure
+		await cline.say("error", "Parameter validation failed")
+		pushToolResult(formatResponse.toolError("Parameter validation failed"))
+		return { isValid: false }
+	}
+
+	// Extract validated and sanitized parameters
+	const validatedParams = processedResult.data!
+
+	// Parse arguments if they exist
+	let parsedArguments: Record<string, unknown> | undefined
+	if (validatedParams.arguments !== undefined && validatedParams.arguments !== null) {
+		if (typeof validatedParams.arguments === "string") {
+			try {
+				parsedArguments = JSON.parse(validatedParams.arguments)
+			} catch {
+				// If JSON parsing fails, the arguments were already sanitized as a string
+				parsedArguments = { value: validatedParams.arguments }
+			}
+		} else {
+			parsedArguments = validatedParams.arguments as Record<string, unknown>
 		}
 	}
 
 	return {
 		isValid: true,
-		serverName: params.server_name,
-		toolName: params.tool_name,
+		serverName: validatedParams.server_name,
+		toolName: validatedParams.tool_name,
 		parsedArguments,
 	}
 }

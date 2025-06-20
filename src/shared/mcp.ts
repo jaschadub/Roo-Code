@@ -24,7 +24,15 @@ export type McpTool = {
 	name: string
 	description?: string
 	inputSchema?: object
-	alwaysAllow?: boolean
+	alwaysAllow?: boolean // Legacy support - will be migrated to permissions
+	permissions?: {
+		id?: string
+		scope?: string
+		expiresAt?: number
+		usageCount?: number
+		maxUsage?: number
+		lastUsed?: number
+	}
 }
 
 export type McpResource = {

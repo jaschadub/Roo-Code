@@ -32,6 +32,27 @@ import {
 import { fileExistsAtPath } from "../../utils/fs"
 import { arePathsEqual } from "../../utils/path"
 import { injectVariables } from "../../utils/config"
+import {
+	validateCommand,
+	createSecureCommandWrapper,
+	CommandValidationError,
+	SecurityLevel,
+	SandboxManager,
+	createSandboxManager,
+	validateWorkingDirectoryPath,
+	PathSecurityError,
+	NetworkSecurityManager,
+	getNetworkSecurityManager,
+	validateNetworkSecurity,
+	createSecureHTTPSAgent,
+	AuthenticationManager,
+	getAuthenticationManager,
+	CertificateManager,
+	getCertificateManager,
+	ConnectionSecurityManager,
+	getConnectionSecurityManager,
+} from "../../utils/security"
+import type { NetworkSecurityPolicy, ConnectionSecurityPolicy } from "../../utils/security"
 
 export type McpConnection = {
 	server: McpServer
@@ -45,6 +66,46 @@ const BaseConfigSchema = z.object({
 	timeout: z.number().min(1).max(3600).optional().default(60),
 	alwaysAllow: z.array(z.string()).default([]),
 	watchPaths: z.array(z.string()).optional(), // paths to watch for changes and restart server
+	// Security configuration
+	security: z
+		.object({
+			level: z.enum(["strict", "moderate", "permissive"]).default("moderate"),
+			allowCommandExecution: z.boolean().default(true),
+			allowedCommands: z.array(z.string()).default([]),
+			blockedCommands: z.array(z.string()).default([]),
+			allowedWorkingDirectories: z.array(z.string()).default([]),
+			resourceLimits: z
+				.object({
+					timeout: z.number().min(1000).max(600000).default(60000), // 1 second to 10 minutes
+					maxMemory: z.number().min(1).max(8192).default(512), // 1 MB to 8 GB
+					maxCpu: z.number().min(1).max(100).default(75), // 1% to 100%
+					maxProcesses: z.number().min(1).max(100).default(10),
+				})
+				.default({}),
+			enableSandboxing: z.boolean().default(true),
+			enableCommandLogging: z.boolean().default(true),
+			// Network security configuration
+			network: z
+				.object({
+					enforceTLS: z.boolean().default(true),
+					minTLSVersion: z.enum(["TLSv1.2", "TLSv1.3"]).default("TLSv1.2"),
+					validateCertificates: z.boolean().default(true),
+					enableCertificatePinning: z.boolean().default(false),
+					allowedDomains: z.array(z.string()).default([]),
+					blockedDomains: z.array(z.string()).default([]),
+					connectionTimeout: z.number().min(1000).max(60000).default(10000),
+					requestTimeout: z.number().min(1000).max(300000).default(30000),
+					maxConcurrentConnections: z.number().min(1).max(100).default(10),
+					enableRateLimit: z.boolean().default(true),
+					rateLimitPerMinute: z.number().min(1).max(1000).default(60),
+					requireAuthentication: z.boolean().default(false),
+					authenticationMethod: z
+						.enum(["api_key", "bearer_token", "basic_auth", "oauth2", "custom_header", "mutual_tls"])
+						.optional(),
+				})
+				.default({}),
+		})
+		.default({}),
 })
 
 // Custom error messages for better user feedback
@@ -133,9 +194,27 @@ export class McpHub {
 	isConnecting: boolean = false
 	private refCount: number = 0 // Reference counter for active clients
 	private configChangeDebounceTimers: Map<string, NodeJS.Timeout> = new Map()
+	private sandboxManager: SandboxManager
+	private networkSecurityManager: NetworkSecurityManager
+	private authenticationManager: AuthenticationManager
+	private certificateManager: CertificateManager
+	private connectionSecurityManager: ConnectionSecurityManager
 
 	constructor(provider: ClineProvider) {
 		this.providerRef = new WeakRef(provider)
+		this.sandboxManager = createSandboxManager(SecurityLevel.MODERATE)
+
+		// Initialize network security managers
+		this.networkSecurityManager = getNetworkSecurityManager()
+		this.authenticationManager = getAuthenticationManager()
+		this.certificateManager = getCertificateManager()
+		this.connectionSecurityManager = getConnectionSecurityManager(
+			undefined,
+			this.networkSecurityManager,
+			this.authenticationManager,
+			this.certificateManager,
+		)
+
 		this.watchMcpSettingsFile()
 		this.watchProjectMcpFile().catch(console.error)
 		this.setupWorkspaceFoldersWatcher()
@@ -579,32 +658,125 @@ export class McpHub {
 			})) as typeof config
 
 			if (configInjected.type === "stdio") {
-				// On Windows, wrap commands with cmd.exe to handle non-exe executables like npx.ps1
-				// This is necessary for node version managers (fnm, nvm-windows, volta) that implement
-				// commands as PowerShell scripts rather than executables.
-				// Note: This adds a small overhead as commands go through an additional shell layer.
-				const isWindows = process.platform === "win32"
+				// SECURITY: Implement secure command execution with validation and sandboxing
+				try {
+					// Get security configuration from server config
+					const securityConfig = configInjected.security || {}
+					const securityLevel =
+						securityConfig.level === "strict"
+							? SecurityLevel.STRICT
+							: securityConfig.level === "permissive"
+								? SecurityLevel.PERMISSIVE
+								: SecurityLevel.MODERATE
 
-				// Check if command is already cmd.exe to avoid double-wrapping
-				const isAlreadyWrapped =
-					configInjected.command.toLowerCase() === "cmd.exe" || configInjected.command.toLowerCase() === "cmd"
+					// Validate working directory if specified
+					if (configInjected.cwd) {
+						const cwdValidation = validateWorkingDirectoryPath(
+							configInjected.cwd,
+							securityConfig.allowedWorkingDirectories || [],
+							securityLevel,
+						)
+						if (!cwdValidation.isValid) {
+							throw new CommandValidationError(
+								"Working directory validation failed",
+								cwdValidation.violations,
+								configInjected.cwd,
+							)
+						}
+					}
 
-				const command = isWindows && !isAlreadyWrapped ? "cmd.exe" : configInjected.command
-				const args =
-					isWindows && !isAlreadyWrapped
-						? ["/c", configInjected.command, ...(configInjected.args || [])]
-						: configInjected.args
+					// Prepare command and arguments for validation
+					const baseCommand = configInjected.command
+					const baseArgs = configInjected.args || []
 
-				transport = new StdioClientTransport({
-					command,
-					args,
-					cwd: configInjected.cwd,
-					env: {
-						...getDefaultEnvironment(),
-						...(configInjected.env || {}),
-					},
-					stderr: "pipe",
-				})
+					// On Windows, handle command wrapping securely
+					const isWindows = process.platform === "win32"
+					const isAlreadyWrapped =
+						baseCommand.toLowerCase() === "cmd.exe" || baseCommand.toLowerCase() === "cmd"
+
+					let finalCommand = baseCommand
+					let finalArgs = baseArgs
+
+					if (isWindows && !isAlreadyWrapped && securityConfig.allowCommandExecution !== false) {
+						// Only wrap if command execution is allowed and command is validated
+						const commandValidation = validateCommand(
+							baseCommand,
+							baseArgs,
+							{
+								securityLevel,
+								allowedCommands: securityConfig.allowedCommands || [],
+								blockedPatterns: securityConfig.blockedCommands || [],
+							},
+							securityLevel,
+						)
+
+						if (!commandValidation.isValid) {
+							throw new CommandValidationError(
+								"Command validation failed",
+								commandValidation.violations,
+								`${baseCommand} ${baseArgs.join(" ")}`,
+							)
+						}
+
+						finalCommand = "cmd.exe"
+						finalArgs = ["/c", commandValidation.sanitizedCommand, ...commandValidation.sanitizedArgs]
+					} else {
+						// Validate command directly
+						const commandValidation = validateCommand(
+							finalCommand,
+							finalArgs,
+							{
+								securityLevel,
+								allowedCommands: securityConfig.allowedCommands || [],
+								blockedPatterns: securityConfig.blockedCommands || [],
+							},
+							securityLevel,
+						)
+
+						if (!commandValidation.isValid) {
+							throw new CommandValidationError(
+								"Command validation failed",
+								commandValidation.violations,
+								`${finalCommand} ${finalArgs.join(" ")}`,
+							)
+						}
+
+						finalCommand = commandValidation.sanitizedCommand
+						finalArgs = commandValidation.sanitizedArgs
+					}
+
+					// Create secure command wrapper
+					const secureWrapper = createSecureCommandWrapper(finalCommand, finalArgs, {
+						cwd: configInjected.cwd,
+						env: configInjected.env,
+						timeout: securityConfig.resourceLimits?.timeout || 60000,
+						securityLevel,
+					})
+
+					// Log command execution for security monitoring
+					if (securityConfig.enableCommandLogging !== false) {
+						console.log(
+							`[MCP Security] Executing command for server "${name}": ${finalCommand} ${finalArgs.join(" ")}`,
+						)
+					}
+
+					transport = new StdioClientTransport({
+						command: secureWrapper.command,
+						args: secureWrapper.args,
+						cwd: secureWrapper.options.cwd,
+						env: {
+							...getDefaultEnvironment(),
+							...secureWrapper.options.env,
+						},
+						stderr: "pipe",
+					})
+				} catch (error) {
+					if (error instanceof CommandValidationError || error instanceof PathSecurityError) {
+						console.error(`[MCP Security] Command execution blocked for server "${name}":`, error.message)
+						throw new Error(`Security validation failed: ${error.message}`)
+					}
+					throw error
+				}
 
 				// Set up stdio specific error handling
 				transport.onerror = async (error) => {
@@ -654,12 +826,23 @@ export class McpHub {
 					console.error(`No stderr stream for ${name}`)
 				}
 			} else if (configInjected.type === "streamable-http") {
-				// Streamable HTTP connection
+				// SECURITY: Validate network security for HTTP connections
+				const networkValidation = this.networkSecurityManager.validateURL(configInjected.url)
+				if (!networkValidation.allowed) {
+					throw new Error(`Network security violation: ${networkValidation.violations.join(", ")}`)
+				}
+
+				// Streamable HTTP connection with security validation
 				transport = new StreamableHTTPClientTransport(new URL(configInjected.url), {
 					requestInit: {
 						headers: configInjected.headers,
 					},
 				})
+
+				// Log network security event
+				console.log(
+					`[MCP Network Security] Streamable HTTP connection to ${configInjected.url} - Security Level: ${networkValidation.securityLevel}`,
+				)
 
 				// Set up Streamable HTTP specific error handling
 				transport.onerror = async (error) => {
@@ -680,13 +863,19 @@ export class McpHub {
 					await this.notifyWebviewOfServerChanges()
 				}
 			} else if (configInjected.type === "sse") {
-				// SSE connection
+				// SECURITY: Validate network security for SSE connections
+				const networkValidation = this.networkSecurityManager.validateURL(configInjected.url)
+				if (!networkValidation.allowed) {
+					throw new Error(`Network security violation: ${networkValidation.violations.join(", ")}`)
+				}
+
+				// SSE connection with security validation
 				const sseOptions = {
 					requestInit: {
 						headers: configInjected.headers,
 					},
 				}
-				// Configure ReconnectingEventSource options
+				// Configure ReconnectingEventSource options with security
 				const reconnectingEventSourceOptions = {
 					max_retry_time: 5000, // Maximum retry time in milliseconds
 					withCredentials: configInjected.headers?.["Authorization"] ? true : false, // Enable credentials if Authorization header exists
@@ -703,6 +892,11 @@ export class McpHub {
 					...sseOptions,
 					eventSourceInit: reconnectingEventSourceOptions,
 				})
+
+				// Log network security event
+				console.log(
+					`[MCP Network Security] SSE connection to ${configInjected.url} - Security Level: ${networkValidation.securityLevel}`,
+				)
 
 				// Set up SSE specific error handling
 				transport.onerror = async (error) => {
@@ -1586,6 +1780,18 @@ export class McpHub {
 			clearTimeout(timer)
 		}
 		this.configChangeDebounceTimers.clear()
+
+		// Dispose sandbox manager
+		this.sandboxManager.dispose()
+
+		// Clean up network security managers
+		this.networkSecurityManager.cleanupExpiredHSTS()
+		this.networkSecurityManager.cleanupExpiredPins()
+		this.authenticationManager.cleanupRateLimitCounters()
+		this.authenticationManager.cleanupExpiredTokens()
+		this.certificateManager.cleanupCache()
+		this.certificateManager.cleanupExpiredPins()
+		this.connectionSecurityManager.cleanupRateLimitCounters()
 
 		this.removeAllFileWatchers()
 		for (const connection of this.connections) {
