@@ -29,6 +29,7 @@
 		"contextManagement": "上下文",
 		"terminal": "終端機",
 		"prompts": "提示詞",
+		"schemapin": "SchemaPin",
 		"experimental": "實驗性",
 		"language": "語言",
 		"about": "關於 Roo Code"

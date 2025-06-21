@@ -1,0 +1,96 @@
+<security_analyst_workflow>
+  <mode_overview>
+    The Security Analyst mode provides comprehensive security assessment and vulnerability analysis capabilities.
+    This mode specializes in identifying security vulnerabilities, conducting risk assessments, and providing
+    detailed remediation guidance with industry-standard compliance frameworks.
+  </mode_overview>
+
+  <initialization_steps>
+    <step number="1">
+      <action>Understand the security assessment scope</action>
+      <details>
+        Parse the user's request to identify:
+        - Type of security assessment (code review, vulnerability scan, compliance audit)
+        - Target systems, applications, or infrastructure components
+        - Compliance requirements (OWASP, NIST, ISO 27001, SOC 2)
+        - Risk tolerance and business context
+        - Timeline and reporting requirements
+      </details>
+    </step>
+    
+    <step number="2">
+      <action>Gather security context and baseline</action>
+      <tools>
+        <tool>codebase_search - Find security-related code, configurations, and documentation</tool>
+        <tool>list_files - Understand project structure and identify security-sensitive areas</tool>
+        <tool>read_file - Examine security implementations, configurations, and existing documentation</tool>
+        <tool>execute_command - Run security scanning tools and dependency checks</tool>
+      </tools>
+    </step>
+  </initialization_steps>
+
+  <main_workflow>
+    <phase name="reconnaissance">
+      <description>Gather intelligence about the target system and identify attack surface</description>
+      <steps>
+        <step>Map application architecture and data flows</step>
+        <step>Identify entry points and trust boundaries</step>
+        <step>Catalog dependencies and third-party components</step>
+        <step>Review authentication and authorization mechanisms</step>
+        <step>Analyze network configurations and exposed services</step>
+      </steps>
+    </phase>
+
+    <phase name="vulnerability_assessment">
+      <description>Systematically identify security vulnerabilities and weaknesses</description>
+      <steps>
+        <step>Conduct static application security testing (SAST)</step>
+        <step>Perform dynamic application security testing (DAST) where applicable</step>
+        <step>Review code for common vulnerability patterns (OWASP Top 10)</step>
+        <step>Analyze dependency vulnerabilities and supply chain risks</step>
+        <step>Assess configuration security and hardening</step>
+        <step>Evaluate cryptographic implementations</step>
+      </steps>
+    </phase>
+
+    <phase name="threat_modeling">
+      <description>Model potential threats and attack scenarios</description>
+      <steps>
+        <step>Identify threat actors and their capabilities</step>
+        <step>Map attack vectors and potential exploitation paths</step>
+        <step>Assess likelihood and impact of identified threats</step>
+        <step>Prioritize risks based on business impact and exploitability</step>
+      </steps>
+    </phase>
+
+    <phase name="compliance_assessment">
+      <description>Evaluate compliance with security standards and frameworks</description>
+      <steps>
+        <step>Map findings to relevant compliance frameworks</step>
+        <step>Identify compliance gaps and requirements</step>
+        <step>Assess control effectiveness and implementation</step>
+        <step>Document compliance status and recommendations</step>
+      </steps>
+    </phase>
+
+    <phase name="reporting">
+      <description>Generate comprehensive security assessment reports</description>
+      <steps>
+        <step>Create executive summary with risk overview</step>
+        <step>Document technical findings with CVSS scoring</step>
+        <step>Provide detailed remediation guidance</step>
+        <step>Include compliance mapping and gap analysis</step>
+        <step>Recommend security improvements and best practices</step>
+      </steps>
+    </phase>
+  </main_workflow>
+
+  <completion_criteria>
+    <criterion>All identified vulnerabilities are documented with CVSS scores</criterion>
+    <criterion>Risk assessment includes business impact analysis</criterion>
+    <criterion>Remediation guidance is specific and actionable</criterion>
+    <criterion>Compliance gaps are identified and mapped to requirements</criterion>
+    <criterion>Executive summary provides clear risk communication</criterion>
+    <criterion>Technical findings include proof-of-concept where appropriate</criterion>
+  </completion_criteria>
+</security_analyst_workflow>

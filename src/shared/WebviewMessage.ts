@@ -168,6 +168,13 @@ export interface WebviewMessage {
 		| "removeInstalledMarketplaceItem"
 		| "marketplaceInstallResult"
 		| "switchTab"
+		| "schemaPinEnabled"
+		| "schemaPinStrictMode"
+		| "schemaPinAutoPin"
+		| "schemaPinTimeout"
+		| "schemaPinVerificationTimeout"
+		| "schemaPinTrustedDomains"
+		| "schemaPinBlockedDomains"
 	text?: string
 	tab?: "settings" | "history" | "mcp" | "modes" | "chat" | "marketplace" | "account"
 	disabled?: boolean

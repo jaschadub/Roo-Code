@@ -418,15 +418,30 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 		setCustomCondensingPrompt: (value) =>
 			setState((prevState) => ({ ...prevState, customCondensingPrompt: value })),
 		// SchemaPin setters
-		setSchemaPinEnabled: (value) => setState((prevState) => ({ ...prevState, schemaPinEnabled: value })),
-		setSchemaPinStrictMode: (value) => setState((prevState) => ({ ...prevState, schemaPinStrictMode: value })),
-		setSchemaPinAutoPin: (value) => setState((prevState) => ({ ...prevState, schemaPinAutoPin: value })),
-		setSchemaPinVerificationTimeout: (value) =>
-			setState((prevState) => ({ ...prevState, schemaPinVerificationTimeout: value })),
-		setSchemaPinTrustedDomains: (value) =>
-			setState((prevState) => ({ ...prevState, schemaPinTrustedDomains: value })),
-		setSchemaPinBlockedDomains: (value) =>
-			setState((prevState) => ({ ...prevState, schemaPinBlockedDomains: value })),
+		setSchemaPinEnabled: (value) => {
+			setState((prevState) => ({ ...prevState, schemaPinEnabled: value }))
+			vscode.postMessage({ type: "schemaPinEnabled", bool: value })
+		},
+		setSchemaPinStrictMode: (value) => {
+			setState((prevState) => ({ ...prevState, schemaPinStrictMode: value }))
+			vscode.postMessage({ type: "schemaPinStrictMode", bool: value })
+		},
+		setSchemaPinAutoPin: (value) => {
+			setState((prevState) => ({ ...prevState, schemaPinAutoPin: value }))
+			vscode.postMessage({ type: "schemaPinAutoPin", bool: value })
+		},
+		setSchemaPinVerificationTimeout: (value) => {
+			setState((prevState) => ({ ...prevState, schemaPinVerificationTimeout: value }))
+			vscode.postMessage({ type: "schemaPinVerificationTimeout", value: value })
+		},
+		setSchemaPinTrustedDomains: (value) => {
+			setState((prevState) => ({ ...prevState, schemaPinTrustedDomains: value }))
+			vscode.postMessage({ type: "schemaPinTrustedDomains", values: value })
+		},
+		setSchemaPinBlockedDomains: (value) => {
+			setState((prevState) => ({ ...prevState, schemaPinBlockedDomains: value }))
+			vscode.postMessage({ type: "schemaPinBlockedDomains", values: value })
+		},
 	}
 
 	return <ExtensionStateContext.Provider value={contextValue}>{children}</ExtensionStateContext.Provider>

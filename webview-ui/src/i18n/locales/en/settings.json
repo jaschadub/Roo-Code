@@ -29,6 +29,7 @@
 		"contextManagement": "Context",
 		"terminal": "Terminal",
 		"prompts": "Prompts",
+		"schemapin": "SchemaPin",
 		"experimental": "Experimental",
 		"language": "Language",
 		"about": "About Roo Code"

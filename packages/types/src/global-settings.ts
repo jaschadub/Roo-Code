@@ -103,6 +103,14 @@ export const globalSettingsSchema = z.object({
 	customSupportPrompts: customSupportPromptsSchema.optional(),
 	enhancementApiConfigId: z.string().optional(),
 	historyPreviewCollapsed: z.boolean().optional(),
+
+	// SchemaPin settings
+	schemaPinEnabled: z.boolean().optional(),
+	schemaPinStrictMode: z.boolean().optional(),
+	schemaPinAutoPin: z.boolean().optional(),
+	schemaPinTimeout: z.number().optional(),
+	schemaPinTrustedDomains: z.array(z.string()).optional(),
+	schemaPinBlockedDomains: z.array(z.string()).optional(),
 })
 
 export type GlobalSettings = z.infer<typeof globalSettingsSchema>
@@ -229,6 +237,14 @@ export const EVALS_SETTINGS: RooCodeSettings = {
 	mode: "code",
 
 	customModes: [],
+
+	// SchemaPin settings
+	schemaPinEnabled: false,
+	schemaPinStrictMode: false,
+	schemaPinAutoPin: false,
+	schemaPinTimeout: 30000,
+	schemaPinTrustedDomains: [],
+	schemaPinBlockedDomains: [],
 }
 
 export const EVALS_TIMEOUT = 5 * 60 * 1_000

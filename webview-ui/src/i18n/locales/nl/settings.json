@@ -1,34 +1,6 @@
 {
-	"common": {
-		"save": "Opslaan",
-		"done": "Gereed",
-		"cancel": "Annuleren",
-		"reset": "Resetten",
-		"select": "Selecteren",
-		"add": "Header toevoegen",
-		"remove": "Verwijderen"
-	},
-	"header": {
-		"title": "Instellingen",
-		"saveButtonTooltip": "Wijzigingen opslaan",
-		"nothingChangedTooltip": "Niets gewijzigd",
-		"doneButtonTooltip": "Niet-opgeslagen wijzigingen negeren en instellingen sluiten"
-	},
-	"unsavedChangesDialog": {
-		"title": "Niet-opgeslagen wijzigingen",
-		"description": "Wil je de wijzigingen negeren en doorgaan?",
-		"cancelButton": "Annuleren",
-		"discardButton": "Wijzigingen negeren"
-	},
 	"sections": {
-		"providers": "Providers",
-		"autoApprove": "Auto-goedkeuren",
-		"browser": "Browser",
-		"checkpoints": "Checkpoints",
-		"notifications": "Meldingen",
-		"contextManagement": "Context",
-		"terminal": "Terminal",
-		"prompts": "Prompts",
+		"schemapin": "SchemaPin",
 		"experimental": "Experimenteel",
 		"language": "Taal",
 		"about": "Over Roo Code"

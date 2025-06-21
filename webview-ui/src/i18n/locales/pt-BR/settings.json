@@ -1,34 +1,6 @@
 {
-	"common": {
-		"save": "Salvar",
-		"done": "Concluído",
-		"cancel": "Cancelar",
-		"reset": "Redefinir",
-		"select": "Selecionar",
-		"add": "Adicionar cabeçalho",
-		"remove": "Remover"
-	},
-	"header": {
-		"title": "Configurações",
-		"saveButtonTooltip": "Salvar alterações",
-		"nothingChangedTooltip": "Nada alterado",
-		"doneButtonTooltip": "Descartar alterações não salvas e fechar o painel de configurações"
-	},
-	"unsavedChangesDialog": {
-		"title": "Alterações não salvas",
-		"description": "Deseja descartar as alterações e continuar?",
-		"cancelButton": "Cancelar",
-		"discardButton": "Descartar alterações"
-	},
 	"sections": {
-		"providers": "Provedores",
-		"autoApprove": "Aprovação",
-		"browser": "Navegador",
-		"checkpoints": "Checkpoints",
-		"notifications": "Notificações",
-		"contextManagement": "Contexto",
-		"terminal": "Terminal",
-		"prompts": "Prompts",
+		"schemapin": "SchemaPin",
 		"experimental": "Experimental",
 		"language": "Idioma",
 		"about": "Sobre"

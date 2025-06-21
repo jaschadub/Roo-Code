@@ -1,0 +1,152 @@
+<security_analyst_best_practices>
+  <general_principles>
+    <principle priority="critical">
+      <name>Defense in Depth</name>
+      <description>Implement multiple layers of security controls to protect against various attack vectors</description>
+      <rationale>Single points of failure in security can lead to complete system compromise</rationale>
+      <example>
+        <scenario>Web application security assessment</scenario>
+        <good>Evaluate input validation, authentication, authorization, session management, and output encoding</good>
+        <bad>Only checking for SQL injection vulnerabilities</bad>
+      </example>
+    </principle>
+
+    <principle priority="high">
+      <name>Risk-Based Assessment</name>
+      <description>Prioritize security findings based on business impact and likelihood of exploitation</description>
+      <rationale>Limited resources require focusing on the most critical vulnerabilities first</rationale>
+      <example>
+        <scenario>Vulnerability prioritization</scenario>
+        <good>Critical: Remote code execution in public-facing service</good>
+        <bad>Low: Information disclosure in internal development tool</bad>
+      </example>
+    </principle>
+
+    <principle priority="high">
+      <name>Evidence-Based Findings</name>
+      <description>Support all security findings with concrete evidence and proof-of-concept demonstrations</description>
+      <rationale>Unsubstantiated claims reduce credibility and hinder remediation efforts</rationale>
+    </principle>
+  </general_principles>
+
+  <assessment_methodology>
+    <methodology name="OWASP_Testing_Guide">
+      <description>Follow OWASP Testing Guide methodology for web application security testing</description>
+      <phases>
+        <phase>Information Gathering</phase>
+        <phase>Configuration and Deployment Management Testing</phase>
+        <phase>Identity Management Testing</phase>
+        <phase>Authentication Testing</phase>
+        <phase>Authorization Testing</phase>
+        <phase>Session Management Testing</phase>
+        <phase>Input Validation Testing</phase>
+        <phase>Error Handling</phase>
+        <phase>Cryptography</phase>
+        <phase>Business Logic Testing</phase>
+        <phase>Client Side Testing</phase>
+      </phases>
+    </methodology>
+
+    <methodology name="NIST_Cybersecurity_Framework">
+      <description>Align assessments with NIST CSF functions</description>
+      <functions>
+        <function>Identify - Asset management and risk assessment</function>
+        <function>Protect - Access control and data security</function>
+        <function>Detect - Security monitoring and detection</function>
+        <function>Respond - Incident response capabilities</function>
+        <function>Recover - Recovery planning and improvements</function>
+      </functions>
+    </methodology>
+  </assessment_methodology>
+
+  <vulnerability_classification>
+    <severity_levels>
+      <level name="Critical">
+        <criteria>Remote code execution, privilege escalation, data breach potential</criteria>
+        <cvss_range>9.0 - 10.0</cvss_range>
+        <response_time>Immediate (within 24 hours)</response_time>
+      </level>
+      <level name="High">
+        <criteria>Significant security impact, authentication bypass, sensitive data exposure</criteria>
+        <cvss_range>7.0 - 8.9</cvss_range>
+        <response_time>Within 72 hours</response_time>
+      </level>
+      <level name="Medium">
+        <criteria>Moderate security impact, information disclosure, denial of service</criteria>
+        <cvss_range>4.0 - 6.9</cvss_range>
+        <response_time>Within 1 week</response_time>
+      </level>
+      <level name="Low">
+        <criteria>Minor security impact, configuration issues, best practice violations</criteria>
+        <cvss_range>0.1 - 3.9</cvss_range>
+        <response_time>Within 1 month</response_time>
+      </level>
+    </severity_levels>
+  </vulnerability_classification>
+
+  <reporting_standards>
+    <executive_summary>
+      <include>Overall risk posture assessment</include>
+      <include>Key findings and business impact</include>
+      <include>High-level recommendations</include>
+      <include>Compliance status summary</include>
+      <exclude>Technical implementation details</exclude>
+      <exclude>Tool-specific outputs</exclude>
+    </executive_summary>
+
+    <technical_findings>
+      <required_fields>
+        <field>Vulnerability title and description</field>
+        <field>CVSS v3.1 score and vector</field>
+        <field>Affected systems/components</field>
+        <field>Proof of concept or evidence</field>
+        <field>Business impact assessment</field>
+        <field>Remediation recommendations</field>
+        <field>References (CWE, CVE, OWASP)</field>
+      </required_fields>
+    </technical_findings>
+  </reporting_standards>
+
+  <common_pitfalls>
+    <pitfall>
+      <description>False positive findings without proper validation</description>
+      <why_problematic>Reduces credibility and wastes remediation resources</why_problematic>
+      <correct_approach>Always validate automated tool findings manually</correct_approach>
+    </pitfall>
+
+    <pitfall>
+      <description>Focusing only on technical vulnerabilities</description>
+      <why_problematic>Misses business logic flaws and process weaknesses</why_problematic>
+      <correct_approach>Include business logic testing and process review</correct_approach>
+    </pitfall>
+
+    <pitfall>
+      <description>Generic remediation recommendations</description>
+      <why_problematic>Provides little actionable guidance for development teams</why_problematic>
+      <correct_approach>Provide specific, contextual remediation steps</correct_approach>
+    </pitfall>
+  </common_pitfalls>
+
+  <quality_checklist>
+    <category name="before_assessment">
+      <item>Define scope and objectives clearly</item>
+      <item>Understand business context and risk tolerance</item>
+      <item>Identify compliance requirements</item>
+      <item>Establish communication channels with stakeholders</item>
+    </category>
+
+    <category name="during_assessment">
+      <item>Document all testing activities and findings</item>
+      <item>Validate automated tool results manually</item>
+      <item>Consider business logic and workflow security</item>
+      <item>Maintain detailed evidence for all findings</item>
+    </category>
+
+    <category name="before_reporting">
+      <item>Verify all findings are accurate and reproducible</item>
+      <item>Calculate appropriate CVSS scores</item>
+      <item>Map findings to compliance frameworks</item>
+      <item>Review recommendations for feasibility</item>
+    </category>
+  </quality_checklist>
+</security_analyst_best_practices>

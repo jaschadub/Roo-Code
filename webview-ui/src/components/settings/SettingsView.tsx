@@ -324,6 +324,13 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone, t
 			vscode.postMessage({ type: "upsertApiConfiguration", text: currentApiConfigName, apiConfiguration })
 			vscode.postMessage({ type: "telemetrySetting", text: telemetrySetting })
 			vscode.postMessage({ type: "codebaseIndexConfig", values: codebaseIndexConfig })
+			// SchemaPin settings
+			vscode.postMessage({ type: "schemaPinEnabled", bool: schemaPinEnabled })
+			vscode.postMessage({ type: "schemaPinStrictMode", bool: schemaPinStrictMode })
+			vscode.postMessage({ type: "schemaPinAutoPin", bool: schemaPinAutoPin })
+			vscode.postMessage({ type: "schemaPinVerificationTimeout", value: schemaPinVerificationTimeout })
+			vscode.postMessage({ type: "schemaPinTrustedDomains", values: schemaPinTrustedDomains })
+			vscode.postMessage({ type: "schemaPinBlockedDomains", values: schemaPinBlockedDomains })
 			setChangeDetected(false)
 		}
 	}

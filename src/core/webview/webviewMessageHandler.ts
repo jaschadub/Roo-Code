@@ -672,6 +672,55 @@ export const webviewMessageHandler = async (
 			await updateGlobalState("enableCheckpoints", enableCheckpoints)
 			await provider.postStateToWebview()
 			break
+		case "schemaPinEnabled":
+			const schemaPinEnabled = message.bool ?? false
+			await updateGlobalState("schemaPinEnabled", schemaPinEnabled)
+			// Also update VSCode configuration
+			await vscode.workspace
+				.getConfiguration(Package.name)
+				.update("schemaPin.enabled", schemaPinEnabled, vscode.ConfigurationTarget.Global)
+			await provider.postStateToWebview()
+			break
+		case "schemaPinStrictMode":
+			const schemaPinStrictMode = message.bool ?? false
+			await updateGlobalState("schemaPinStrictMode", schemaPinStrictMode)
+			await vscode.workspace
+				.getConfiguration(Package.name)
+				.update("schemaPin.strictMode", schemaPinStrictMode, vscode.ConfigurationTarget.Global)
+			await provider.postStateToWebview()
+			break
+		case "schemaPinAutoPin":
+			const schemaPinAutoPin = message.bool ?? false
+			await updateGlobalState("schemaPinAutoPin", schemaPinAutoPin)
+			await vscode.workspace
+				.getConfiguration(Package.name)
+				.update("schemaPin.autoPin", schemaPinAutoPin, vscode.ConfigurationTarget.Global)
+			await provider.postStateToWebview()
+			break
+		case "schemaPinTimeout":
+			const schemaPinTimeout = message.value ?? 30000
+			await updateGlobalState("schemaPinTimeout", schemaPinTimeout)
+			await vscode.workspace
+				.getConfiguration(Package.name)
+				.update("schemaPin.timeout", schemaPinTimeout, vscode.ConfigurationTarget.Global)
+			await provider.postStateToWebview()
+			break
+		case "schemaPinTrustedDomains":
+			const schemaPinTrustedDomains = message.value ?? []
+			await updateGlobalState("schemaPinTrustedDomains", schemaPinTrustedDomains)
+			await vscode.workspace
+				.getConfiguration(Package.name)
+				.update("schemaPin.trustedDomains", schemaPinTrustedDomains, vscode.ConfigurationTarget.Global)
+			await provider.postStateToWebview()
+			break
+		case "schemaPinBlockedDomains":
+			const schemaPinBlockedDomains = message.value ?? []
+			await updateGlobalState("schemaPinBlockedDomains", schemaPinBlockedDomains)
+			await vscode.workspace
+				.getConfiguration(Package.name)
+				.update("schemaPin.blockedDomains", schemaPinBlockedDomains, vscode.ConfigurationTarget.Global)
+			await provider.postStateToWebview()
+			break
 		case "browserViewportSize":
 			const browserViewportSize = message.text ?? "900x600"
 			await updateGlobalState("browserViewportSize", browserViewportSize)

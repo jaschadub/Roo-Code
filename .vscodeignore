@@ -1,0 +1,46 @@
+# VSCode Extension Ignore File
+# This file controls what gets included in the VSIX package
+
+# Exclude development files
+.vscode/**
+.vscode-test/**
+out/test/**
+src/**
+.gitignore
+vsc-extension-quickstart.md
+**/tsconfig.json
+**/.eslintrc.json
+**/*.map
+**/*.ts
+
+# Exclude build artifacts
+node_modules/**
+.nyc_output/**
+coverage/**
+**/*.vsix
+
+# Exclude test files
+**/*.test.*
+**/*.spec.*
+**/test/**
+**/__tests__/**
+
+# Exclude documentation that's not needed in package
+docs/**
+*.md
+!README.md
+
+# Exclude CI/CD files
+.github/**
+.changeset/**
+
+# IMPORTANT: Include custom modes and rules
+# These are needed for the extension to work properly
+!.roomodes
+!.roo/**
+
+# Exclude other development files
+.env*
+*.log
+.DS_Store
+Thumbs.db

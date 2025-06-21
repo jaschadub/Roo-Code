@@ -29,6 +29,7 @@
 		"contextManagement": "컨텍스트",
 		"terminal": "터미널",
 		"prompts": "프롬프트",
+		"schemapin": "SchemaPin",
 		"experimental": "실험적",
 		"language": "언어",
 		"about": "Roo Code 정보"

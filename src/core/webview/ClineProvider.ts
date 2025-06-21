@@ -1333,6 +1333,12 @@ export class ClineProvider
 			maxConcurrentFileReads,
 			condensingApiConfigId,
 			customCondensingPrompt,
+			schemaPinEnabled,
+			schemaPinStrictMode,
+			schemaPinAutoPin,
+			schemaPinVerificationTimeout,
+			schemaPinTrustedDomains,
+			schemaPinBlockedDomains,
 			codebaseIndexConfig,
 			codebaseIndexModels,
 		} = await this.getState()
@@ -1450,6 +1456,12 @@ export class ClineProvider
 				codebaseIndexEmbedderBaseUrl: "",
 				codebaseIndexEmbedderModelId: "",
 			},
+			schemaPinEnabled,
+			schemaPinStrictMode,
+			schemaPinAutoPin,
+			schemaPinVerificationTimeout,
+			schemaPinTrustedDomains,
+			schemaPinBlockedDomains,
 			mdmCompliant: this.checkMdmCompliance(),
 		}
 	}
@@ -1474,6 +1486,15 @@ export class ClineProvider
 		if (!providerSettings.apiProvider) {
 			providerSettings.apiProvider = apiProvider
 		}
+
+		// Load SchemaPin settings from VSCode configuration
+		const config = vscode.workspace.getConfiguration(Package.name)
+		const schemaPinEnabled = config.get<boolean>("schemapin.enabled", true)
+		const schemaPinStrictMode = config.get<boolean>("schemapin.strictMode", false)
+		const schemaPinAutoPin = config.get<boolean>("schemapin.autoPin", false)
+		const schemaPinVerificationTimeout = config.get<number>("schemapin.verificationTimeout", 5000)
+		const schemaPinTrustedDomains = config.get<string[]>("schemapin.trustedDomains", [])
+		const schemaPinBlockedDomains = config.get<string[]>("schemapin.blockedDomains", [])
 
 		let organizationAllowList = ORGANIZATION_ALLOW_ALL
 
@@ -1592,6 +1613,13 @@ export class ClineProvider
 			// Explicitly add condensing settings
 			condensingApiConfigId: stateValues.condensingApiConfigId,
 			customCondensingPrompt: stateValues.customCondensingPrompt,
+			// SchemaPin settings from VSCode configuration
+			schemaPinEnabled,
+			schemaPinStrictMode,
+			schemaPinAutoPin,
+			schemaPinVerificationTimeout,
+			schemaPinTrustedDomains,
+			schemaPinBlockedDomains,
 			codebaseIndexModels: stateValues.codebaseIndexModels ?? EMBEDDING_MODEL_PROFILES,
 			codebaseIndexConfig: stateValues.codebaseIndexConfig ?? {
 				codebaseIndexEnabled: false,
