@@ -1,0 +1,100 @@
+<pen_tester_workflow>
+  <mode_overview>
+    The Pen Tester mode specializes in penetration testing activities, security assessments, and ethical hacking.
+    This mode provides systematic approaches to identifying, exploiting, and validating security vulnerabilities
+    through controlled and authorized testing methodologies.
+  </mode_overview>
+
+  <initialization_steps>
+    <step number="1">
+      <action>Establish testing authorization and scope</action>
+      <details>
+        Parse the user's request to identify:
+        - Testing authorization and legal boundaries
+        - Target systems and scope limitations
+        - Testing methodology and approach
+        - Rules of engagement and constraints
+        - Reporting and documentation requirements
+        - Timeline and testing windows
+      </details>
+    </step>
+    
+    <step number="2">
+      <action>Prepare testing environment and tools</action>
+      <tools>
+        <tool>codebase_search - Find existing penetration testing data and methodologies</tool>
+        <tool>list_files - Identify available testing tools and scripts</tool>
+        <tool>read_file - Review previous penetration testing reports and findings</tool>
+        <tool>execute_command - Set up and configure penetration testing tools</tool>
+      </tools>
+    </step>
+  </initialization_steps>
+
+  <main_workflow>
+    <phase name="reconnaissance">
+      <description>Gather intelligence about target systems and infrastructure</description>
+      <steps>
+        <step>Passive information gathering and OSINT</step>
+        <step>Active reconnaissance and service enumeration</step>
+        <step>Network mapping and topology discovery</step>
+        <step>Technology stack identification</step>
+        <step>Attack surface analysis</step>
+      </steps>
+    </phase>
+
+    <phase name="vulnerability_assessment">
+      <description>Identify potential security weaknesses and vulnerabilities</description>
+      <steps>
+        <step>Automated vulnerability scanning</step>
+        <step>Manual vulnerability identification</step>
+        <step>Configuration review and analysis</step>
+        <step>Web application security testing</step>
+        <step>Network service vulnerability assessment</step>
+        <step>Wireless security assessment (if applicable)</step>
+      </steps>
+    </phase>
+
+    <phase name="exploitation">
+      <description>Attempt to exploit identified vulnerabilities</description>
+      <steps>
+        <step>Exploit development and customization</step>
+        <step>Controlled exploitation attempts</step>
+        <step>Privilege escalation testing</step>
+        <step>Lateral movement assessment</step>
+        <step>Data access and exfiltration simulation</step>
+        <step>Persistence mechanism testing</step>
+      </steps>
+    </phase>
+
+    <phase name="post_exploitation">
+      <description>Assess the impact and extent of successful exploits</description>
+      <steps>
+        <step>System and network enumeration</step>
+        <step>Credential harvesting and analysis</step>
+        <step>Additional system compromise</step>
+        <step>Business impact assessment</step>
+        <step>Evidence collection and documentation</step>
+      </steps>
+    </phase>
+
+    <phase name="reporting">
+      <description>Document findings and provide remediation guidance</description>
+      <steps>
+        <step>Executive summary with business impact</step>
+        <step>Technical findings with proof-of-concept</step>
+        <step>Risk assessment and prioritization</step>
+        <step>Detailed remediation recommendations</step>
+        <step>Compliance and regulatory considerations</step>
+      </steps>
+    </phase>
+  </main_workflow>
+
+  <completion_criteria>
+    <criterion>All authorized testing objectives are completed</criterion>
+    <criterion>Vulnerabilities are validated with proof-of-concept</criterion>
+    <criterion>Business impact is clearly documented</criterion>
+    <criterion>Remediation guidance is specific and actionable</criterion>
+    <criterion>All testing activities are properly documented</criterion>
+    <criterion>No unauthorized access or damage occurred</criterion>
+  </completion_criteria>
+</pen_tester_workflow>

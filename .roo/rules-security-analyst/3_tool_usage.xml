@@ -1,0 +1,192 @@
+<security_analyst_tool_usage>
+  <tool_priorities>
+    <priority level="1">
+      <tool>codebase_search</tool>
+      <when>Always use first to find security-related code and configurations</when>
+      <why>Semantic search identifies security implementations better than keyword searches</why>
+      <security_queries>
+        <query>authentication authorization login password hash</query>
+        <query>encryption cryptography SSL TLS certificate</query>
+        <query>input validation sanitization XSS SQL injection</query>
+        <query>session management token JWT cookie</query>
+        <query>access control permissions roles RBAC</query>
+      </security_queries>
+    </priority>
+
+    <priority level="2">
+      <tool>execute_command</tool>
+      <when>Run security scanning tools and dependency checks</when>
+      <why>Automated tools provide comprehensive vulnerability detection</why>
+      <security_commands>
+        <command>npm audit --audit-level moderate</command>
+        <command>yarn audit --level moderate</command>
+        <command>pip-audit --desc --format json</command>
+        <command>safety check --json</command>
+        <command>bandit -r . -f json</command>
+        <command>semgrep --config=auto --json</command>
+      </security_commands>
+    </priority>
+
+    <priority level="3">
+      <tool>read_file</tool>
+      <when>After identifying security-sensitive files</when>
+      <why>Manual code review catches logic flaws automated tools miss</why>
+    </priority>
+  </tool_priorities>
+
+  <tool_specific_guidance>
+    <tool name="codebase_search">
+      <security_focus>
+        <search_pattern type="authentication">
+          <query>login signin authenticate password hash bcrypt</query>
+          <purpose>Find authentication mechanisms and password handling</purpose>
+        </search_pattern>
+        <search_pattern type="authorization">
+          <query>authorize permission role access control middleware</query>
+          <purpose>Identify access control implementations</purpose>
+        </search_pattern>
+        <search_pattern type="input_validation">
+          <query>validate sanitize escape input user data</query>
+          <purpose>Locate input validation and sanitization code</purpose>
+        </search_pattern>
+        <search_pattern type="cryptography">
+          <query>encrypt decrypt cipher key crypto random</query>
+          <purpose>Find cryptographic implementations</purpose>
+        </search_pattern>
+        <search_pattern type="session_management">
+          <query>session cookie token JWT localStorage sessionStorage</query>
+          <purpose>Analyze session handling mechanisms</purpose>
+        </search_pattern>
+      </security_focus>
+    </tool>
+
+    <tool name="execute_command">
+      <security_scanning>
+        <dependency_scanning>
+          <npm_projects>
+            <command>npm audit --audit-level moderate --json</command>
+            <purpose>Identify known vulnerabilities in npm dependencies</purpose>
+          </npm_projects>
+          <python_projects>
+            <command>pip-audit --desc --format json</command>
+            <purpose>Check Python dependencies for security issues</purpose>
+          </python_projects>
+          <ruby_projects>
+            <command>bundle audit --format json</command>
+            <purpose>Audit Ruby gems for vulnerabilities</purpose>
+          </ruby_projects>
+        </dependency_scanning>
+
+        <static_analysis>
+          <semgrep>
+            <command>semgrep --config=auto --json --severity=ERROR --severity=WARNING</command>
+            <purpose>Static analysis for security vulnerabilities</purpose>
+          </semgrep>
+          <bandit>
+            <command>bandit -r . -f json -ll</command>
+            <purpose>Python security linting</purpose>
+          </bandit>
+          <eslint_security>
+            <command>npx eslint . --ext .js,.ts,.jsx,.tsx --format json</command>
+            <purpose>JavaScript/TypeScript security linting</purpose>
+          </eslint_security>
+        </static_analysis>
+
+        <secrets_scanning>
+          <truffleHog>
+            <command>trufflehog filesystem . --json</command>
+            <purpose>Detect secrets and credentials in code</purpose>
+          </truffleHog>
+          <gitleaks>
+            <command>gitleaks detect --source . --report-format json</command>
+            <purpose>Find secrets in git history</purpose>
+          </gitleaks>
+        </secrets_scanning>
+      </security_scanning>
+    </tool>
+
+    <tool name="write_to_file">
+      <security_documentation>
+        <vulnerability_report>
+          <template>
+            <path>security_assessment_report.md</path>
+            <structure>
+              <section>Executive Summary</section>
+              <section>Methodology</section>
+              <section>Findings Summary</section>
+              <section>Detailed Findings</section>
+              <section>Risk Assessment</section>
+              <section>Recommendations</section>
+              <section>Compliance Status</section>
+            </structure>
+          </template>
+        </vulnerability_report>
+
+        <security_checklist>
+          <path>security_checklist.md</path>
+          <categories>
+            <category>Authentication & Authorization</category>
+            <category>Input Validation</category>
+            <category>Session Management</category>
+            <category>Cryptography</category>
+            <category>Error Handling</category>
+            <category>Logging & Monitoring</category>
+          </categories>
+        </security_checklist>
+      </security_documentation>
+    </tool>
+
+    <tool name="search_files">
+      <security_patterns>
+        <pattern name="hardcoded_secrets">
+          <regex>(password|secret|key|token)\s*[:=]\s*['"]\w+['"]</regex>
+          <purpose>Find hardcoded credentials</purpose>
+        </pattern>
+        <pattern name="sql_injection_risk">
+          <regex>query\s*\+|execute\s*\(.*\+|SELECT.*\+</regex>
+          <purpose>Identify potential SQL injection vulnerabilities</purpose>
+        </pattern>
+        <pattern name="xss_risk">
+          <regex>innerHTML|outerHTML|document\.write|eval\s*\(</regex>
+          <purpose>Find XSS vulnerability patterns</purpose>
+        </pattern>
+        <pattern name="insecure_random">
+          <regex>Math\.random|Random\(\)|rand\(\)</regex>
+          <purpose>Locate insecure random number generation</purpose>
+        </pattern>
+      </security_patterns>
+    </tool>
+  </tool_specific_guidance>
+
+  <assessment_workflows>
+    <workflow name="web_application_assessment">
+      <sequence>
+        <step>codebase_search - Find authentication and authorization code</step>
+        <step>read_file - Review authentication implementations</step>
+        <step>search_files - Look for hardcoded secrets and injection risks</step>
+        <step>execute_command - Run dependency audit and static analysis</step>
+        <step>write_to_file - Document findings and recommendations</step>
+      </sequence>
+    </workflow>
+
+    <workflow name="api_security_assessment">
+      <sequence>
+        <step>codebase_search - Find API endpoints and middleware</step>
+        <step>read_file - Analyze input validation and rate limiting</step>
+        <step>search_files - Check for API key exposure</step>
+        <step>execute_command - Test for common API vulnerabilities</step>
+        <step>write_to_file - Create API security report</step>
+      </sequence>
+    </workflow>
+
+    <workflow name="infrastructure_assessment">
+      <sequence>
+        <step>list_files - Identify configuration files</step>
+        <step>read_file - Review Docker, Kubernetes, and deployment configs</step>
+        <step>search_files - Find insecure configurations</step>
+        <step>execute_command - Scan for infrastructure vulnerabilities</step>
+        <step>write_to_file - Document infrastructure security findings</step>
+      </sequence>
+    </workflow>
+  </assessment_workflows>
+</security_analyst_tool_usage>

@@ -1,0 +1,270 @@
+<osint_investigator_tool_usage>
+  <tool_priorities>
+    <priority level="1">
+      <tool>browser_action</tool>
+      <when>Primary tool for accessing public information sources and databases</when>
+      <why>OSINT relies heavily on web-based information gathering from public sources</why>
+      <osint_sources>
+        <source>Search engines (Google, Bing, DuckDuckGo, Yandex)</source>
+        <source>Social media platforms (LinkedIn, Twitter, Facebook)</source>
+        <source>Public databases (WHOIS, DNS, certificate transparency)</source>
+        <source>Government and regulatory databases</source>
+        <source>News and media archives</source>
+        <source>Academic and research repositories</source>
+      </osint_sources>
+    </priority>
+
+    <priority level="2">
+      <tool>execute_command</tool>
+      <when>Run reconnaissance and intelligence gathering tools</when>
+      <why>Command-line tools provide automated and systematic data collection</why>
+      <osint_commands>
+        <command>nslookup domain.com</command>
+        <command>dig domain.com ANY</command>
+        <command>whois domain.com</command>
+        <command>nmap -sn target_range</command>
+        <command>curl -I https://domain.com</command>
+        <command>subfinder -d domain.com</command>
+      </osint_commands>
+    </priority>
+
+    <priority level="3">
+      <tool>codebase_search</tool>
+      <when>Find existing intelligence data and previous investigations</when>
+      <why>Leverage previous reconnaissance work and avoid duplication</why>
+    </priority>
+
+    <priority level="4">
+      <tool>write_to_file</tool>
+      <when>Document findings and create intelligence reports</when>
+      <why>Systematic documentation is crucial for intelligence analysis</why>
+    </priority>
+  </tool_priorities>
+
+  <tool_specific_guidance>
+    <tool name="browser_action">
+      <osint_techniques>
+        <technique name="google_dorking">
+          <purpose>Advanced search engine queries for targeted information discovery</purpose>
+          <examples>
+            <example>site:target.com filetype:pdf</example>
+            <example>inurl:admin site:target.com</example>
+            <example>"target company" filetype:xlsx</example>
+            <example>site:linkedin.com "target company"</example>
+          </examples>
+        </technique>
+
+        <technique name="social_media_intelligence">
+          <purpose>Gather information from social media platforms</purpose>
+          <platforms>
+            <platform name="linkedin">
+              <queries>
+                <query>Company employees and organizational structure</query>
+                <query>Job postings revealing technology stack</query>
+                <query>Professional connections and relationships</query>
+              </queries>
+            </platform>
+            <platform name="twitter">
+              <queries>
+                <query>Real-time mentions and sentiment</query>
+                <query>Employee personal information</query>
+                <query>Company announcements and updates</query>
+              </queries>
+            </platform>
+          </platforms>
+        </technique>
+
+        <technique name="public_databases">
+          <purpose>Access structured public information repositories</purpose>
+          <databases>
+            <database name="whois">
+              <url>https://whois.net</url>
+              <purpose>Domain registration information</purpose>
+            </database>
+            <database name="certificate_transparency">
+              <url>https://crt.sh</url>
+              <purpose>SSL certificate discovery</purpose>
+            </database>
+            <database name="shodan">
+              <url>https://shodan.io</url>
+              <purpose>Internet-connected device discovery</purpose>
+            </database>
+          </databases>
+        </technique>
+      </osint_techniques>
+    </tool>
+
+    <tool name="execute_command">
+      <reconnaissance_tools>
+        <category name="dns_reconnaissance">
+          <tool name="dig">
+            <command>dig @8.8.8.8 target.com ANY</command>
+            <purpose>DNS record enumeration</purpose>
+          </tool>
+          <tool name="nslookup">
+            <command>nslookup -type=MX target.com</command>
+            <purpose>Mail server discovery</purpose>
+          </tool>
+          <tool name="dnsrecon">
+            <command>dnsrecon -d target.com -t std</command>
+            <purpose>Comprehensive DNS reconnaissance</purpose>
+          </tool>
+        </category>
+
+        <category name="subdomain_enumeration">
+          <tool name="subfinder">
+            <command>subfinder -d target.com -silent</command>
+            <purpose>Passive subdomain discovery</purpose>
+          </tool>
+          <tool name="amass">
+            <command>amass enum -passive -d target.com</command>
+            <purpose>Advanced subdomain enumeration</purpose>
+          </tool>
+          <tool name="assetfinder">
+            <command>assetfinder target.com</command>
+            <purpose>Fast subdomain discovery</purpose>
+          </tool>
+        </category>
+
+        <category name="network_reconnaissance">
+          <tool name="nmap">
+            <command>nmap -sn 192.168.1.0/24</command>
+            <purpose>Network discovery and host enumeration</purpose>
+          </tool>
+          <tool name="masscan">
+            <command>masscan -p80,443 192.168.1.0/24</command>
+            <purpose>Fast port scanning</purpose>
+          </tool>
+        </category>
+
+        <category name="web_reconnaissance">
+          <tool name="curl">
+            <command>curl -I https://target.com</command>
+            <purpose>HTTP header analysis</purpose>
+          </tool>
+          <tool name="wget">
+            <command>wget --spider --force-html -r -l2 https://target.com</command>
+            <purpose>Website structure mapping</purpose>
+          </tool>
+          <tool name="whatweb">
+            <command>whatweb target.com</command>
+            <purpose>Web technology fingerprinting</purpose>
+          </tool>
+        </category>
+      </reconnaissance_tools>
+    </tool>
+
+    <tool name="write_to_file">
+      <intelligence_documentation>
+        <report_types>
+          <report name="target_profile">
+            <path>intelligence/target_profile.md</path>
+            <sections>
+              <section>Executive Summary</section>
+              <section>Target Overview</section>
+              <section>Digital Footprint</section>
+              <section>Technology Stack</section>
+              <section>Key Personnel</section>
+              <section>Risk Assessment</section>
+            </sections>
+          </report>
+
+          <report name="technical_intelligence">
+            <path>intelligence/technical_report.md</path>
+            <sections>
+              <section>Infrastructure Analysis</section>
+              <section>Network Architecture</section>
+              <section>Service Enumeration</section>
+              <section>Vulnerability Indicators</section>
+              <section>Attack Surface Analysis</section>
+            </sections>
+          </report>
+
+          <report name="threat_assessment">
+            <path>intelligence/threat_assessment.md</path>
+            <sections>
+              <section>Threat Landscape</section>
+              <section>Actor Attribution</section>
+              <section>Tactics and Techniques</section>
+              <section>Indicators of Compromise</section>
+              <section>Defensive Recommendations</section>
+            </sections>
+          </report>
+        </report_types>
+
+        <data_formats>
+          <format name="ioc_list">
+            <path>intelligence/indicators.json</path>
+            <structure>
+              <field>indicator_type</field>
+              <field>indicator_value</field>
+              <field>confidence_level</field>
+              <field>source</field>
+              <field>timestamp</field>
+            </structure>
+          </format>
+
+          <format name="timeline">
+            <path>intelligence/timeline.csv</path>
+            <structure>
+              <field>timestamp</field>
+              <field>event_type</field>
+              <field>description</field>
+              <field>source</field>
+              <field>confidence</field>
+            </structure>
+          </format>
+        </data_formats>
+      </intelligence_documentation>
+    </tool>
+
+    <tool name="search_files">
+      <intelligence_patterns>
+        <pattern name="previous_investigations">
+          <regex>intelligence|osint|reconnaissance|target</regex>
+          <purpose>Find existing intelligence reports and data</purpose>
+        </pattern>
+        <pattern name="indicators">
+          <regex>(IOC|indicator|compromise|malware|threat)</regex>
+          <purpose>Locate threat intelligence and indicators</purpose>
+        </pattern>
+        <pattern name="contact_information">
+          <regex>(\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b)</regex>
+          <purpose>Extract email addresses from documents</purpose>
+        </pattern>
+      </intelligence_patterns>
+    </tool>
+  </tool_specific_guidance>
+
+  <investigation_workflows>
+    <workflow name="domain_investigation">
+      <sequence>
+        <step>execute_command - Run WHOIS lookup and DNS enumeration</step>
+        <step>browser_action - Check certificate transparency logs</step>
+        <step>execute_command - Enumerate subdomains</step>
+        <step>browser_action - Search for domain mentions online</step>
+        <step>write_to_file - Document domain intelligence</step>
+      </sequence>
+    </workflow>
+
+    <workflow name="organization_profiling">
+      <sequence>
+        <step>browser_action - Research company information and structure</step>
+        <step>browser_action - Gather employee information from LinkedIn</step>
+        <step>browser_action - Search for job postings and technology mentions</step>
+        <step>execute_command - Enumerate organization's digital assets</step>
+        <step>write_to_file - Create comprehensive organization profile</step>
+      </sequence>
+    </workflow>
+
+    <workflow name="threat_actor_analysis">
+      <sequence>
+        <step>codebase_search - Find existing threat intelligence</step>
+        <step>browser_action - Research known TTPs and campaigns</step>
+        <step>browser_action - Analyze social media and forum activity</step>
+        <step>execute_command - Correlate infrastructure indicators</step>
+        <step>write_to_file - Generate threat actor assessment</step>
+      </sequence>
+    </workflow>
+  </investigation_workflows>
+</osint_investigator_tool_usage>

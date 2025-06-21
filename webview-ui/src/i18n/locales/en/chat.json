@@ -83,7 +83,7 @@
 		"tooltip": "Cancel the current operation"
 	},
 	"scrollToBottom": "Scroll to bottom of chat",
-	"about": "Generate, refactor, and debug code with AI assistance. Check out our <DocsLink>documentation</DocsLink> to learn more.",
+	"about": "Build, refactor, and debug code with AI assistance. Check out our <DocsLink>documentation</DocsLink> to learn more.",
 	"onboarding": "Your task list in this workspace is empty.",
 	"rooTips": {
 		"boomerangTasks": {
@@ -232,14 +232,14 @@
 		"description": "Auto-approve allows Roo Code to perform actions without asking for permission. Only enable for actions you fully trust. More detailed configuration available in <settingsLink>Settings</settingsLink>."
 	},
 	"announcement": {
-		"title": "🎉 Roo Code {{version}} Released",
-		"description": "Roo Code {{version}} brings major new features and improvements based on your feedback.",
-		"whatsNew": "What's New",
-		"feature1": "<bold>Roo Marketplace Launch</bold>: The marketplace is now live! Discover and install modes and MCPs easier than ever before.",
-		"feature2": "<bold>Gemini 2.5 Models</bold>: Added support for new Gemini 2.5 Pro, Flash, and Flash Lite models.",
-		"feature3": "<bold>Excel File Support & More</bold>: Added Excel (.xlsx) file support and numerous bug fixes and improvements!",
-		"hideButton": "Hide announcement",
-		"detailsDiscussLinks": "Get more details and discuss in <discordLink>Discord</discordLink> and <redditLink>Reddit</redditLink> 🚀"
+		"title": "🎉 Welcome to Rook Code {{version}}",
+		"description": "Rook Code is a security-hardened fork of Roo Code, designed for developers who demand Zero Trust AI in their workflow.",
+		"whatsNew": "Key Features",
+		"feature1": "<bold>Enterprise-Grade Security</bold>: Built with security-first principles and comprehensive input validation for Zero Trust AI.",
+		"feature2": "<bold>Multi-Mode AI Assistant</bold>: Switch between specialized modes for coding, debugging, architecture, and more.",
+		"feature3": "<bold>Advanced Tool Integration</bold>: Seamlessly work with browsers, terminals, and external APIs through secure MCP servers.",
+		"hideButton": "Get started",
+		"detailsDiscussLinks": "Join our community on <discordLink>Discord</discordLink> and <redditLink>Reddit</redditLink> 🚀"
 	},
 	"reasoning": {
 		"thinking": "Thinking",
