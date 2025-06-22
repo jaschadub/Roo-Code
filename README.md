@@ -282,10 +282,5 @@ When contributing security-related changes:
 4. Ensure backward compatibility
 5. Update security documentation
 
----
-
-## License
-
-[Apache 2.0 © 2025 Roo Code, Inc.](./LICENSE)
 
 ---
